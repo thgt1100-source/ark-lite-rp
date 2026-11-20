@@ -1,0 +1,6 @@
+{
+  "name": "Ark Lite — Trình Phiêu Lưu Nhập Vai",
+  "description": "Trình phiêu lưu nhập vai với 6 màn hình tách biệt, 1 lượt = 1 trang, streaming, gửi ảnh, nhập/tải save và safety settings.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
