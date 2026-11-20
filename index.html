@@ -291,6 +291,14 @@
     color: var(--accent);
     background: rgba(56, 189, 248, 0.14);
   }
+  .floating-nav-restore {
+    position: fixed;
+    right: 12px;
+    bottom: calc(14px + var(--safe-b));
+    z-index: 9998;
+    display: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  }
 </style>
 </head>
 <body>
@@ -308,6 +316,7 @@
       </div>
     </div>
     <div class="topbar-actions">
+      <button type="button" id="toggleBottomNavBtn" class="btn btn-sm" onclick="toggleBottomNav()">Ẩn 6 nút</button>
       <button type="button" class="btn btn-sm btn-primary" onclick="triggerImportSave()">Nhập Save</button>
       <button type="button" class="btn btn-sm btn-success" onclick="saveCurrentToSlot()">Lưu Slot</button>
     </div>
@@ -406,6 +415,7 @@
           <button type="button" id="stopStreamBtn" class="btn btn-sm btn-danger" onclick="stopGeneration()" disabled>Dừng</button>
           <button type="button" id="regenTurnBtn" class="btn btn-sm btn-warn" onclick="regenerateCurrentPage()">Làm lại</button>
           <button type="button" id="rawTagToggleBtn" class="btn btn-sm" onclick="toggleRawTags()">Thẻ thô: Ẩn</button>
+          <button type="button" id="chatToggleBottomNavBtn" class="btn btn-sm" onclick="toggleBottomNav()">Ẩn 6 nút</button>
         </div>
       </div>
     </div>
@@ -582,6 +592,7 @@
   </section>
 </div>
 
+<button type="button" id="floatingRestoreNavBtn" class="btn btn-sm btn-warn floating-nav-restore" onclick="toggleBottomNav()">Hiện 6 nút</button>
 <nav id="bottomNav" class="bottom-nav" aria-label="Điều hướng chính">
   <button type="button" class="nav-btn is-active" data-nav="lobby" onclick="goView('lobby')"><span>Sảnh</span></button>
   <button type="button" class="nav-btn" data-nav="chat" onclick="goView('chat')"><span>Truyện</span></button>
@@ -602,9 +613,56 @@
   ];
 
   // Đồng bộ vị trí thanh điều hướng đáy theo visualViewport để không bị trôi hoặc hở khoảng trống khi thanh trình duyệt ẩn/hiện
+  function applyBottomNavVisibility() {
+    const nav = document.getElementById("bottomNav");
+    const shell = document.querySelector(".app-shell");
+    const btn = document.getElementById("toggleBottomNavBtn");
+    const chatBtn = document.getElementById("chatToggleBottomNavBtn");
+    const floatBtn = document.getElementById("floatingRestoreNavBtn");
+    const hidden = Boolean(state.hideBottomNav);
+    if (nav) {
+      if (hidden) {
+        nav.style.setProperty("display", "none", "important");
+        nav.style.setProperty("visibility", "hidden", "important");
+        nav.style.setProperty("pointer-events", "none", "important");
+      } else {
+        nav.style.setProperty("display", "grid", "important");
+        nav.style.setProperty("visibility", "visible", "important");
+        nav.style.setProperty("pointer-events", "auto", "important");
+      }
+    }
+    if (floatBtn) {
+      floatBtn.style.setProperty("display", hidden ? "inline-flex" : "none", "important");
+    }
+    if (shell) {
+      shell.style.paddingBottom = hidden ? "56px" : "calc(var(--nav-h) + var(--safe-b) + 16px)";
+    }
+    const label = hidden ? "Hiện 6 nút" : "Ẩn 6 nút";
+    const cls = "btn btn-sm " + (hidden ? "btn-warn" : "");
+    if (btn) {
+      btn.textContent = label;
+      btn.className = cls;
+    }
+    if (chatBtn) {
+      chatBtn.textContent = label;
+      chatBtn.className = cls;
+    }
+  }
+
+  window.toggleBottomNav = function() {
+    state.hideBottomNav = !state.hideBottomNav;
+    persistState();
+    applyBottomNavVisibility();
+    syncViewportBottomNav();
+  };
+
   function syncViewportBottomNav() {
     const nav = document.getElementById("bottomNav");
     if (!nav) return;
+    if (state.hideBottomNav) {
+      nav.style.display = "none";
+      return;
+    }
     const vv = window.visualViewport;
     if (!vv) {
       nav.style.bottom = "0px";
@@ -648,6 +706,7 @@
       streamEnabled: true,
       showRawTags: false,
       showPostMeta: false,
+      hideBottomNav: false,
       player: { name: "Trần Thiện", pronoun: "anh Thiện" },
       world: { name: "Thế giới hiện đại" },
       config: {
@@ -698,7 +757,8 @@
         turns: state.turns,
         slots: state.slots,
         checkpoint: state.checkpoint,
-        streamEnabled: state.streamEnabled
+        streamEnabled: state.streamEnabled,
+        hideBottomNav: state.hideBottomNav
       }));
     } catch (_) {}
   }
@@ -723,6 +783,7 @@
         if (Array.isArray(parsed.slots) && parsed.slots.length) state.slots = parsed.slots;
         if (parsed.checkpoint) state.checkpoint = parsed.checkpoint;
         if (typeof parsed.streamEnabled === "boolean") state.streamEnabled = parsed.streamEnabled;
+        if (typeof parsed.hideBottomNav === "boolean") state.hideBottomNav = parsed.hideBottomNav;
       }
     } catch (_) {}
   }
@@ -779,6 +840,7 @@
     if (target === "data") renderSlots();
     if (target === "chat") renderChatPage();
     updateLobbyPill();
+    applyBottomNavVisibility();
     syncViewportBottomNav();
     window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
   };
@@ -791,7 +853,6 @@
   function normalizeText(text) {
     if (!text) return "";
     let s = String(text);
-    s = s.replace(/\bJin-?seong\b/gi, () => state.player.pronoun || "anh Thiện");
     s = s.replace(/\s+([.,!?;:])/g, "$1");
     return s.trim();
   }
@@ -822,15 +883,24 @@
     let metaPart = cutIndex >= 0 ? text.slice(cutIndex) : "";
 
     if (!state.showRawTags) {
+      // Only strip closed <thinking>...</thinking> blocks, or an unclosed <thinking> ONLY if there is actual narrative after it
       mainPart = mainPart
         .replace(/\.?\s*<\/thinking>/gi, "")
-        .replace(/<thinking>[\s\S]*?(?:<\/thinking>|$)/gi, "")
+        .replace(/<thinking>[\s\S]*?<\/thinking>/gi, "")
+        .replace(/<thinking>[\s\S]*?(?=\n{2,}[A-ZÀ-Ỹ"“]|$)/gi, (match) => {
+          // If the entire text is just an unclosed <thinking> block without separate narrative paragraphs, keep it so user doesn't see "(Chưa có nội dung)"
+          const rest = text.slice(text.indexOf(match) + match.length).trim();
+          return rest ? "" : match;
+        })
         .replace(/<\/?chathistory>/gi, "")
         .replace(/<state_update>[\s\S]*?(?:<\/state_update>|$)/gi, "")
         .replace(/<finish>[\s\S]*?(?:<\/finish>|$)/gi, "");
     }
 
     mainPart = normalizeText(mainPart);
+    if (!mainPart && text.trim()) {
+      mainPart = normalizeText(text);
+    }
     return { mainText: mainPart, metaText: metaPart.trim() };
   }
 
@@ -1562,18 +1632,103 @@
     showBanner("Đã lưu cài đặt Ngữ cảnh.");
   };
 
+  function repairTruncatedJson(rawText) {
+    let s = String(rawText || "");
+    if (!s.trim()) return s;
+    let inStr = false;
+    let esc = false;
+    const stack = [];
+    for (let i = 0; i < s.length; i++) {
+      const ch = s[i];
+      if (inStr) {
+        if (esc) {
+          esc = false;
+        } else if (ch === "\\") {
+          esc = true;
+        } else if (ch === '"') {
+          inStr = false;
+        }
+      } else {
+        if (ch === '"') {
+          inStr = true;
+        } else if (ch === "{") {
+          stack.push("}");
+        } else if (ch === "[") {
+          stack.push("]");
+        } else if (ch === "}" || ch === "]") {
+          if (stack.length && stack[stack.length - 1] === ch) {
+            stack.pop();
+          }
+        }
+      }
+    }
+    if (inStr) s += '"';
+    s = s.replace(/,\s*$/, "");
+    while (stack.length) {
+      s += stack.pop();
+    }
+    return s;
+  }
+
+  function parseSaveJsonSafe(rawText) {
+    try {
+      return { data: JSON.parse(rawText), repaired: false };
+    } catch (firstErr) {
+      try {
+        const fixed = repairTruncatedJson(rawText);
+        const data = JSON.parse(fixed);
+        return { data, repaired: true, warning: firstErr.message || String(firstErr) };
+      } catch (_) {
+        throw firstErr;
+      }
+    }
+  }
+
+  function extractItemText(item) {
+    if (typeof item === "string") return item;
+    if (!item || typeof item !== "object") return "";
+    if (Array.isArray(item.swipes) && item.swipes.length) {
+      const idx = typeof item.swipeId === "number" && item.swipes[item.swipeId] != null
+        ? item.swipeId
+        : (typeof item.currentSwipe === "number" && item.swipes[item.currentSwipe] != null
+          ? item.currentSwipe
+          : item.swipes.length - 1);
+      const chosen = item.swipes[idx] ?? item.swipes[0];
+      if (typeof chosen === "string") return chosen;
+      if (chosen && typeof chosen === "object") {
+        return String(chosen.text ?? chosen.content ?? chosen.value ?? "");
+      }
+    }
+    if (typeof item.text === "string") return item.text;
+    if (typeof item.content === "string") return item.content;
+    if (typeof item.value === "string") return item.value;
+    if (typeof item.message === "string") return item.message;
+    if (Array.isArray(item.content)) {
+      return item.content.map((c) => (typeof c === "string" ? c : (c?.text || ""))).join("");
+    }
+    if (Array.isArray(item.parts)) {
+      return item.parts.map((p) => (typeof p === "string" ? p : (p?.text || ""))).join("");
+    }
+    return "";
+  }
+
   function extractTurnsFromObject(obj) {
     if (!obj || typeof obj !== "object") return [];
     const candidates = [
       obj.turns, obj.chatTurns, obj.storyTurns, obj.messages, obj.chatHistory,
       obj.history, obj.chapters, obj.pages, obj.logs, obj.entries,
-      obj.savedState?.turns, obj.savedState?.messages, obj.savedState?.chatHistory,
-      obj.data?.turns, obj.data?.messages, obj.state?.turns
+      obj.savedState?.turns, obj.savedState?.messages, obj.savedState?.chatHistory, obj.savedState?.history,
+      obj.data?.turns, obj.data?.messages, obj.data?.history,
+      obj.state?.turns, obj.state?.history
     ];
     for (const arr of candidates) {
-      if (Array.isArray(arr) && arr.length) return convertArrayToTurns(arr);
+      if (Array.isArray(arr) && arr.length) {
+        const turns = convertArrayToTurns(arr);
+        if (turns.length) return turns;
+      }
     }
     for (const k of Object.keys(obj)) {
+      if (k === "config" || k === "tawaPreset" || k === "safetySettings" || k === "slots") continue;
       const v = obj[k];
       if (v && typeof v === "object") {
         const found = extractTurnsFromObject(v);
@@ -1596,25 +1751,29 @@
         out.push({
           id: item.id || ("t_" + out.length),
           user: String(item.user ?? item.prompt ?? ""),
-          assistant: String(item.assistant ?? item.response ?? item.content ?? ""),
+          assistant: String(item.assistant ?? item.response ?? extractItemText(item)),
           imageData: item.imageData || "",
           imageCaption: item.imageCaption || ""
         });
         continue;
       }
-      const role = String(item.role || item.sender || "").toLowerCase();
-      const text = typeof item.content === "string"
-        ? item.content
-        : Array.isArray(item.parts)
-          ? item.parts.map((p) => p.text || "").join("")
-          : JSON.stringify(item.content ?? "");
+      const role = String(item.role || item.sender || (item.is_user ? "user" : "") || "").toLowerCase();
+      const text = extractItemText(item);
+      if (!text && !role) continue;
 
-      if (role === "user" || role === "player") {
+      if (role === "user" || role === "player" || role === "human") {
         if (pendingUser) out.push({ id: "t_" + out.length, user: pendingUser, assistant: "" });
         pendingUser = text;
-      } else if (role === "assistant" || role === "model" || role === "ai" || role === "narrator") {
+      } else if (role === "assistant" || role === "model" || role === "ai" || role === "narrator" || role === "char") {
         out.push({ id: "t_" + out.length, user: pendingUser, assistant: text });
         pendingUser = "";
+      } else if (text) {
+        if (pendingUser) {
+          out.push({ id: "t_" + out.length, user: pendingUser, assistant: text });
+          pendingUser = "";
+        } else {
+          out.push({ id: "t_" + out.length, user: "", assistant: text });
+        }
       }
     }
     if (pendingUser) out.push({ id: "t_" + out.length, user: pendingUser, assistant: "" });
@@ -1622,13 +1781,14 @@
   }
 
   function applyImportedJsonText(rawText) {
-    let data;
+    let parsedRes;
     try {
-      data = JSON.parse(rawText);
+      parsedRes = parseSaveJsonSafe(rawText);
     } catch (e) {
       showBanner("File JSON không hợp lệ: " + (e.message || e), "err");
       return;
     }
+    const data = parsedRes.data;
 
     state.checkpoint = {
       savedAt: new Date().toISOString(),
@@ -1666,7 +1826,7 @@
     renderSlots();
 
     if (extracted.length > 0) {
-      showBanner("Đã nhập thành công " + extracted.length + " lượt truyện.");
+      showBanner("Đã nhập thành công " + extracted.length + " lượt truyện" + (parsedRes.repaired ? " (đã tự khép phần đuôi JSON bị cắt dở)." : "."));
       window.goView("chat");
     } else {
       const keys = Object.keys(data || {}).join(", ");
@@ -1864,6 +2024,7 @@
 
   loadPersistedState();
   updateLobbyPill();
+  applyBottomNavVisibility();
   syncViewportBottomNav();
   window.goView("lobby");
 })();
