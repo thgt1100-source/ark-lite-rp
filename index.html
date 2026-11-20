@@ -299,6 +299,18 @@
     display: none;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
   }
+  /* Hide the floating "Powered by Netlify" badge injected in the bottom-right corner */
+  #netlify-badge,
+  .netlify-badge,
+  [id^="netlify-badge"],
+  [class*="netlify-badge"],
+  [id*="netlify-badge"],
+  a[href*="netlify.com"][target="_blank"],
+  a[href*="netlify.com"] img[alt*="Netlify" i],
+  a[aria-label*="Netlify" i],
+  a[title*="Netlify" i] {
+    display: none !important;
+  }
 </style>
 </head>
 <body>
