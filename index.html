@@ -71,7 +71,42 @@
   }
   .brand-title { font-weight: 700; font-size: 14px; line-height: 1.2; }
   .brand-sub { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .topbar-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .topbar-actions { display: flex; gap: 6px; flex-shrink: 0; position: relative; }
+  .quick-menu-pop {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 170px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 6px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: none;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .quick-menu-pop.is-open { display: flex; }
+  .quick-menu-item {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .quick-menu-item:hover, .quick-menu-item.is-active {
+    background: rgba(56, 189, 248, 0.14);
+    color: var(--accent);
+  }
 
   .ark-screen { display: none !important; }
   .ark-screen.is-active { display: block !important; }
@@ -328,9 +363,17 @@
       </div>
     </div>
     <div class="topbar-actions">
-      <button type="button" id="toggleBottomNavBtn" class="btn btn-sm" onclick="toggleBottomNav()">Ẩn 6 nút</button>
+      <button type="button" id="quickMenuBtn" class="btn btn-sm" onclick="toggleQuickMenu(event)">Mục ▾</button>
       <button type="button" class="btn btn-sm btn-primary" onclick="triggerImportSave()">Nhập Save</button>
       <button type="button" class="btn btn-sm btn-success" onclick="saveCurrentToSlot()">Lưu Slot</button>
+      <div id="quickMenuPop" class="quick-menu-pop" role="menu">
+        <button type="button" class="quick-menu-item" data-menu="lobby" onclick="selectQuickMenu('lobby')">Sảnh chính</button>
+        <button type="button" class="quick-menu-item" data-menu="chat" onclick="selectQuickMenu('chat')">Truyện</button>
+        <button type="button" class="quick-menu-item" data-menu="config" onclick="selectQuickMenu('config')">Cấu hình</button>
+        <button type="button" class="quick-menu-item" data-menu="preset" onclick="selectQuickMenu('preset')">P&amp;P Preset</button>
+        <button type="button" class="quick-menu-item" data-menu="context" onclick="selectQuickMenu('context')">Ngữ cảnh</button>
+        <button type="button" class="quick-menu-item" data-menu="data" onclick="selectQuickMenu('data')">Dữ liệu &amp; Save</button>
+      </div>
     </div>
   </header>
 
@@ -499,6 +542,14 @@
           </select>
         </div>
       </div>
+      <div class="field">
+        <label>Chuẩn giao thức API</label>
+        <select id="cfgApiProtocol">
+          <option value="openai">OpenAI Compatible (/v1/chat/completions — khuyên dùng cho ggchan &amp; proxy)</option>
+          <option value="auto">Tự động nhận diện theo URL</option>
+          <option value="gemini">Google Gemini Native (:generateContent)</option>
+        </select>
+      </div>
       <div id="proxyLog" class="log-box">Sẵn sàng kiểm tra proxy...</div>
     </div>
 
@@ -625,13 +676,17 @@
   ];
 
   // Đồng bộ vị trí thanh điều hướng đáy theo visualViewport để không bị trôi hoặc hở khoảng trống khi thanh trình duyệt ẩn/hiện
+  function isBottomNavHiddenNow() {
+    return state.activeView === "chat" || Boolean(state.hideBottomNav);
+  }
+
   function applyBottomNavVisibility() {
     const nav = document.getElementById("bottomNav");
     const shell = document.querySelector(".app-shell");
     const btn = document.getElementById("toggleBottomNavBtn");
     const chatBtn = document.getElementById("chatToggleBottomNavBtn");
     const floatBtn = document.getElementById("floatingRestoreNavBtn");
-    const hidden = Boolean(state.hideBottomNav);
+    const hidden = isBottomNavHiddenNow();
     if (nav) {
       if (hidden) {
         nav.style.setProperty("display", "none", "important");
@@ -644,13 +699,15 @@
       }
     }
     if (floatBtn) {
-      floatBtn.style.setProperty("display", hidden ? "inline-flex" : "none", "important");
+      // Only show floating restore when user is NOT in chat or when explicitly manually hidden outside chat
+      const showFloat = Boolean(state.hideBottomNav) && state.activeView !== "chat";
+      floatBtn.style.setProperty("display", showFloat ? "inline-flex" : "none", "important");
     }
     if (shell) {
-      shell.style.paddingBottom = hidden ? "56px" : "calc(var(--nav-h) + var(--safe-b) + 16px)";
+      shell.style.paddingBottom = hidden ? "28px" : "calc(var(--nav-h) + var(--safe-b) + 16px)";
     }
-    const label = hidden ? "Hiện 6 nút" : "Ẩn 6 nút";
-    const cls = "btn btn-sm " + (hidden ? "btn-warn" : "");
+    const label = state.hideBottomNav ? "Hiện 6 nút" : "Ẩn 6 nút";
+    const cls = "btn btn-sm " + (state.hideBottomNav ? "btn-warn" : "");
     if (btn) {
       btn.textContent = label;
       btn.className = cls;
@@ -659,7 +716,36 @@
       chatBtn.textContent = label;
       chatBtn.className = cls;
     }
+    document.querySelectorAll(".quick-menu-item").forEach((item) => {
+      item.classList.toggle("is-active", item.getAttribute("data-menu") === state.activeView);
+    });
   }
+
+  window.closeQuickMenu = function() {
+    const pop = document.getElementById("quickMenuPop");
+    if (pop) pop.classList.remove("is-open");
+  };
+
+  window.toggleQuickMenu = function(ev) {
+    if (ev) ev.stopPropagation();
+    const pop = document.getElementById("quickMenuPop");
+    if (!pop) return;
+    pop.classList.toggle("is-open");
+  };
+
+  window.selectQuickMenu = function(viewName) {
+    window.closeQuickMenu();
+    window.goView(viewName);
+  };
+
+  document.addEventListener("click", function(ev) {
+    const pop = document.getElementById("quickMenuPop");
+    const btn = document.getElementById("quickMenuBtn");
+    if (!pop || !pop.classList.contains("is-open")) return;
+    if (!pop.contains(ev.target) && (!btn || !btn.contains(ev.target))) {
+      pop.classList.remove("is-open");
+    }
+  });
 
   window.toggleBottomNav = function() {
     state.hideBottomNav = !state.hideBottomNav;
@@ -671,8 +757,8 @@
   function syncViewportBottomNav() {
     const nav = document.getElementById("bottomNav");
     if (!nav) return;
-    if (state.hideBottomNav) {
-      nav.style.display = "none";
+    if (isBottomNavHiddenNow()) {
+      nav.style.setProperty("display", "none", "important");
       return;
     }
     const vv = window.visualViewport;
@@ -725,6 +811,7 @@
         proxyUrl: "",
         proxyKey: "",
         model: "",
+        apiProtocol: "openai",
         seedreamUrl: "",
         seedreamModel: "seedream-5.0-pro",
         safetySettings: JSON.parse(JSON.stringify(DEFAULT_SAFETY))
@@ -1231,15 +1318,60 @@
     const clean = (baseUrl || "").trim().replace(/\/+$/, "");
     if (!clean) return [];
     if (isGemini) {
+      if (/:(generateContent|streamGenerateContent)/i.test(clean)) {
+        return [clean];
+      }
       const m = encodeURIComponent(model || "gemini-2.5-pro");
       const action = isStream ? "streamGenerateContent?alt=sse" : "generateContent";
-      return [
-        clean + "/v1beta/models/" + m + ":" + action,
-        clean + "/models/" + m + ":" + action
+      const withoutV1 = clean.replace(/\/v1(beta)?$/i, "");
+      const list = [
+        withoutV1 + "/v1beta/models/" + m + ":" + action,
+        withoutV1 + "/models/" + m + ":" + action
       ];
+      return [...new Set(list)];
     }
     if (/\/chat\/completions$/i.test(clean)) return [clean];
+    if (/\/v1$/i.test(clean)) return [clean + "/chat/completions"];
     return [clean + "/v1/chat/completions", clean + "/chat/completions"];
+  }
+
+  function normalizeMessagesForRequest(rawMessages, includePrefill) {
+    const cleaned = [];
+    for (const m of rawMessages) {
+      if (!m) continue;
+      if (typeof m.content === "string") {
+        const txt = m.content.trim();
+        if (!txt) continue;
+        if (m.role === "system" && (txt === "Chat History" || txt === "</chathistory>")) continue;
+        cleaned.push({ role: m.role, content: m.content });
+      } else if (Array.isArray(m.content) && m.content.length) {
+        cleaned.push({ role: m.role, content: m.content });
+      }
+    }
+    const merged = [];
+    for (const item of cleaned) {
+      const prev = merged[merged.length - 1];
+      if (
+        prev &&
+        prev.role === item.role &&
+        typeof prev.content === "string" &&
+        typeof item.content === "string"
+      ) {
+        prev.content = prev.content + "\n\n" + item.content;
+      } else {
+        merged.push({ ...item });
+      }
+    }
+    if (includePrefill && state.tawaPreset.prefill && state.tawaPreset.prefill.trim()) {
+      const last = merged[merged.length - 1];
+      if (!last || last.role !== "assistant") {
+        merged.push({ role: "assistant", content: state.tawaPreset.prefill.trim() });
+      }
+    }
+    if (!includePrefill && merged.length && merged[merged.length - 1].role === "assistant") {
+      merged.pop();
+    }
+    return merged;
   }
 
   async function runModelTurn(turnIndex) {
@@ -1264,12 +1396,18 @@
     targetTurn.assistant = "";
     renderChatPage();
 
-    const isGemini = /gemini/i.test(model) || /generativelanguage\.googleapis\.com/i.test(baseUrl);
+    const proto = state.config.apiProtocol || "openai";
+    const isGemini = proto === "gemini" || (proto === "auto" && (/generativelanguage\.googleapis\.com/i.test(baseUrl) || /:(generateContent|streamGenerateContent)/i.test(baseUrl)));
     const endpoints = buildEndpointCandidates(baseUrl, model, state.streamEnabled, isGemini);
-    const messages = buildMessagesPayload(turnIndex);
+    const rawMessages = buildMessagesPayload(turnIndex);
+    const attemptVariants = [
+      { msgs: normalizeMessagesForRequest(rawMessages, true), withSafety: true, label: "chuẩn" },
+      { msgs: normalizeMessagesForRequest(rawMessages, false), withSafety: false, label: "tương thích" }
+    ];
 
     let lastErr = "";
     for (const url of endpoints) {
+      for (const variant of attemptVariants) {
       try {
         const headers = { "Content-Type": "application/json" };
         if (apiKey) {
@@ -1277,9 +1415,14 @@
           headers["x-goog-api-key"] = apiKey;
         }
 
+        const messages = variant.msgs;
+        const sysPrompts = messages.filter((m) => m.role === "system").map((m) => typeof m.content === "string" ? m.content : "").filter(Boolean);
+        const nonSys = messages.filter((m) => m.role !== "system");
+
         const body = isGemini
           ? {
-              contents: messages.map((m) => ({
+              ...(sysPrompts.length ? { systemInstruction: { parts: [{ text: sysPrompts.join("\n\n") }] } } : {}),
+              contents: nonSys.map((m) => ({
                 role: m.role === "assistant" ? "model" : "user",
                 parts: Array.isArray(m.content)
                   ? m.content.map((c) => c.type === "image_url"
@@ -1287,13 +1430,13 @@
                       : { text: c.text || "" })
                   : [{ text: typeof m.content === "string" ? m.content : JSON.stringify(m.content) }]
               })),
-              safetySettings: state.config.safetySettings || DEFAULT_SAFETY
+              ...(variant.withSafety ? { safetySettings: state.config.safetySettings || DEFAULT_SAFETY } : {})
             }
           : {
               model: model,
               messages: messages,
               stream: Boolean(state.streamEnabled),
-              safetySettings: state.config.safetySettings || DEFAULT_SAFETY
+              ...(variant.withSafety && /gemini/i.test(model) ? { safetySettings: state.config.safetySettings || DEFAULT_SAFETY } : {})
             };
 
         const res = await fetch(url, {
@@ -1305,7 +1448,7 @@
 
         if (!res.ok) {
           const errTxt = await res.text().catch(() => "");
-          lastErr = "HTTP " + res.status + " tại " + url + (errTxt ? ": " + errTxt.slice(0, 240) : "");
+          lastErr = "HTTP " + res.status + " [" + variant.label + "] tại " + url + (errTxt ? ": " + errTxt.slice(0, 320) : "");
           appendProxyLog(lastErr);
           continue;
         }
@@ -1394,6 +1537,7 @@
         lastErr = (err && err.message ? err.message : String(err)) + " (" + url + ")";
         appendProxyLog("Lỗi: " + lastErr);
       }
+      }
     }
 
     isGenerating = false;
@@ -1447,6 +1591,8 @@
     document.getElementById("cfgProxyUrl").value = state.config.proxyUrl || "";
     document.getElementById("cfgProxyKey").value = state.config.proxyKey || "";
     document.getElementById("cfgModel").value = state.config.model || "";
+    const protoEl = document.getElementById("cfgApiProtocol");
+    if (protoEl) protoEl.value = state.config.apiProtocol || "openai";
     document.getElementById("cfgSeedreamUrl").value = state.config.seedreamUrl || "";
     document.getElementById("cfgSeedreamModel").value = state.config.seedreamModel || "seedream-5.0-pro";
     const s = state.config.safetySettings || DEFAULT_SAFETY;
@@ -1463,6 +1609,8 @@
     state.config.proxyUrl = (document.getElementById("cfgProxyUrl").value || "").trim();
     state.config.proxyKey = (document.getElementById("cfgProxyKey").value || "").trim();
     state.config.model = (document.getElementById("cfgModel").value || "").trim();
+    const protoEl = document.getElementById("cfgApiProtocol");
+    state.config.apiProtocol = protoEl ? protoEl.value : "openai";
     state.config.seedreamUrl = (document.getElementById("cfgSeedreamUrl").value || "").trim();
     state.config.seedreamModel = (document.getElementById("cfgSeedreamModel").value || "").trim() || "seedream-5.0-pro";
     state.config.safetySettings = [
@@ -1522,7 +1670,9 @@
   window.testProxyConnection = async function() {
     saveConfigFromUI();
     appendProxyLog("Đang kiểm tra kết nối proxy...");
-    const candidates = buildEndpointCandidates(state.config.proxyUrl, state.config.model || "gemini-2.5-pro", false, /gemini/i.test(state.config.model || ""));
+    const proto = state.config.apiProtocol || "openai";
+    const isGemini = proto === "gemini" || (proto === "auto" && (/generativelanguage\.googleapis\.com/i.test(state.config.proxyUrl || "") || /:(generateContent|streamGenerateContent)/i.test(state.config.proxyUrl || "")));
+    const candidates = buildEndpointCandidates(state.config.proxyUrl, state.config.model || "gemini-2.5-pro", false, isGemini);
     for (const url of candidates) {
       try {
         const headers = { "Content-Type": "application/json" };
@@ -1530,13 +1680,21 @@
           headers["Authorization"] = "Bearer " + state.config.proxyKey;
           headers["x-goog-api-key"] = state.config.proxyKey;
         }
+        const testBody = isGemini
+          ? { contents: [{ role: "user", parts: [{ text: "ping" }] }] }
+          : { model: state.config.model || "gemini-2.5-pro", messages: [{ role: "user", content: "ping" }], stream: false };
         const res = await fetch(url, {
           method: "POST",
           headers,
-          body: JSON.stringify({ model: state.config.model || "gemini-2.5-pro", messages: [{ role: "user", content: "ping" }] })
+          body: JSON.stringify(testBody)
         });
-        appendProxyLog("Kiểm tra " + url + " -> HTTP " + res.status);
-        if (res.ok) return;
+        if (!res.ok) {
+          const errTxt = await res.text().catch(() => "");
+          appendProxyLog("Kiểm tra " + url + " -> HTTP " + res.status + (errTxt ? ": " + errTxt.slice(0, 180) : ""));
+        } else {
+          appendProxyLog("Kiểm tra " + url + " -> HTTP " + res.status + " (OK)");
+          return;
+        }
       } catch (e) {
         appendProxyLog("Lỗi " + url + ": " + (e.message || e));
       }
