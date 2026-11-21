@@ -4,9 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>Ark Lite — Bản xem trước tương tác</title>
-<meta name="description" content="Trình phiêu lưu nhập vai với 6 màn hình tách biệt, 1 lượt = 1 trang, streaming, gửi ảnh, nhập/tải save và safety settings." />
+<meta name="description" content="Trình phiêu lưu nhập vai với các màn hình tách biệt, 1 lượt = 1 trang, streaming, gửi ảnh, đồng nhân, Seedream 5 Pro, nhập/tải save và safety settings." />
 <meta property="og:title" content="Ark Lite — Bản xem trước tương tác" />
-<meta property="og:description" content="Trình phiêu lưu nhập vai với 6 màn hình tách biệt, 1 lượt = 1 trang, streaming, gửi ảnh, nhập/tải save và safety settings." />
+<meta property="og:description" content="Trình phiêu lưu nhập vai với các màn hình tách biệt, 1 lượt = 1 trang, streaming, gửi ảnh, đồng nhân, Seedream 5 Pro, nhập/tải save và safety settings." />
 <meta property="og:type" content="website" />
 <style>
   :root {
@@ -132,6 +132,10 @@
 
   .btn {
     appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
     border: 1px solid var(--border);
     background: var(--panel-2);
     color: var(--text);
@@ -334,6 +338,253 @@
     display: none;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
   }
+
+  /* Sảnh chờ Mobile Edition gọn gàng */
+  body.is-lobby-mode .topbar,
+  body.is-lobby-mode #bottomNav,
+  body.is-lobby-mode #floatingRestoreNavBtn {
+    display: none !important;
+  }
+  body.is-lobby-mode .app-shell {
+    max-width: 520px;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 16px 18px 28px !important;
+    position: relative;
+  }
+  .lobby-hero-wrap {
+    position: relative;
+    min-height: calc(100dvh - 44px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 22px;
+    padding: 56px 16px 28px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+  }
+  .lobby-hero-wrap.has-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(11, 15, 23, 0.62) 0%, rgba(11, 15, 23, 0.82) 100%);
+    z-index: 0;
+  }
+  .lobby-hero-wrap > * {
+    position: relative;
+    z-index: 1;
+  }
+  .lobby-bg-btn {
+    position: absolute;
+    top: 10px;
+    left: 6px;
+    background: rgba(18, 24, 38, 0.88);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    color: var(--text);
+    border-radius: 11px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .lobby-bg-btn:hover {
+    border-color: rgba(56, 189, 248, 0.5);
+  }
+  .lobby-title-block {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .lobby-main-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #f8fafc;
+    line-height: 1.1;
+    margin: 0;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+  }
+  .lobby-sub-title {
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .lobby-menu-stack {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .lobby-action-btn {
+    appearance: none;
+    width: 100%;
+    background: rgba(18, 24, 38, 0.88);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: #f1f5f9;
+    border-radius: 14px;
+    padding: 15px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    backdrop-filter: blur(6px);
+  }
+  .lobby-action-btn:active {
+    transform: scale(0.99);
+  }
+  .lobby-action-btn:hover {
+    border-color: rgba(56, 189, 248, 0.55);
+    background: rgba(23, 32, 51, 0.95);
+  }
+  .lobby-action-btn.is-primary-glow {
+    border-color: rgba(56, 189, 248, 0.55);
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.14), 0 8px 22px rgba(2, 132, 199, 0.16);
+  }
+  .lobby-action-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .lobby-tile-btn {
+    appearance: none;
+    width: 100%;
+    min-height: 82px;
+    background: rgba(18, 24, 38, 0.88);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: #f1f5f9;
+    border-radius: 14px;
+    padding: 14px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: border-color 0.15s, background 0.15s;
+    backdrop-filter: blur(6px);
+  }
+  .lobby-tile-btn:hover {
+    border-color: rgba(56, 189, 248, 0.55);
+    background: rgba(23, 32, 51, 0.95);
+  }
+  .lobby-ico {
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lobby-tile-sub {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    text-transform: none;
+    margin-top: -4px;
+  }
+
+
+  .dn-subtabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .dn-subtab-btn {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: #0c1220;
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 8px 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+  }
+  .dn-subtab-btn.is-active {
+    background: rgba(56, 189, 248, 0.16);
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #bae6fd;
+  }
+  .dn-pane { display: none; }
+  .dn-pane.is-active { display: block; }
+  .dn-dock-bar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .dn-dock-btn {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--text);
+    border-radius: 11px;
+    padding: 9px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-align: center;
+    line-height: 1.25;
+  }
+  .dn-dock-btn:hover {
+    border-color: rgba(56, 189, 248, 0.5);
+  }
+  .dn-dock-btn.is-ai {
+    border-color: rgba(56, 189, 248, 0.45);
+    background: rgba(56, 189, 248, 0.12);
+    color: #bae6fd;
+  }
+  .dn-dock-btn.is-go {
+    border-color: rgba(34, 197, 94, 0.45);
+    background: rgba(34, 197, 94, 0.14);
+    color: #bbf7d0;
+  }
+
+  .prose .rp-dialogue {
+    color: #4ade80;
+    font-weight: 500;
+  }
+  .prose .rp-action {
+    color: #e2e8f0;
+  }
+  .prose .rp-thought {
+    color: #93c5fd;
+    font-style: italic;
+  }
+  .turn-img-wrap {
+    margin-bottom: 8px;
+  }
+
   /* Hide the floating "Powered by Netlify" badge injected in the bottom-right corner */
   #netlify-badge,
   .netlify-badge,
@@ -352,6 +603,7 @@
 <input id="lobbySaveFileInput" class="hidden-file-input" type="file" accept=".json,application/json" onchange="handleSaveFileSelect(event)" />
 <input id="dataSaveFileInput" class="hidden-file-input" type="file" accept=".json,application/json" onchange="handleSaveFileSelect(event)" />
 <input id="chatImageInput" class="hidden-file-input" type="file" accept="image/*" onchange="handleChatImageSelect(event)" />
+<input id="lobbyBgInput" class="hidden-file-input" type="file" accept="image/*" onchange="handleLobbyBgSelect(event)" />
 
 <div class="app-shell">
   <header class="topbar">
@@ -370,6 +622,7 @@
         <button type="button" class="quick-menu-item" data-menu="lobby" onclick="selectQuickMenu('lobby')">Sảnh chính</button>
         <button type="button" class="quick-menu-item" data-menu="chat" onclick="selectQuickMenu('chat')">Truyện</button>
         <button type="button" class="quick-menu-item" data-menu="config" onclick="selectQuickMenu('config')">Cấu hình</button>
+        <button type="button" class="quick-menu-item" data-menu="companion" onclick="selectQuickMenu('companion')">Đồng nhân</button>
         <button type="button" class="quick-menu-item" data-menu="preset" onclick="selectQuickMenu('preset')">P&amp;P Preset</button>
         <button type="button" class="quick-menu-item" data-menu="context" onclick="selectQuickMenu('context')">Ngữ cảnh</button>
         <button type="button" class="quick-menu-item" data-menu="data" onclick="selectQuickMenu('data')">Dữ liệu &amp; Save</button>
@@ -384,61 +637,58 @@
 
   <!-- 1. SẢNH CHÍNH -->
   <section id="screen-lobby" class="ark-screen is-active">
-    <div class="card">
-      <div class="card-head">
-        <div>
-          <h1 class="card-title">Sảnh chính Ark Lite</h1>
-          <div class="card-sub">Nhập file save (.json), tải save, vào truyện 1 lượt = 1 trang hoặc mở các mục thiết lập riêng biệt.</div>
-        </div>
-        <span id="lobbyTurnPill" class="pill">0 lượt</span>
-      </div>
-      <div class="btn-row">
-        <button type="button" class="btn btn-primary" onclick="triggerImportSave()">Nhập file Save (.json)</button>
-        <button type="button" class="btn" onclick="togglePasteBox('lobby')">Dán JSON thủ công</button>
-        <button type="button" class="btn btn-success" onclick="downloadLatestSave()">Tải Save (.json)</button>
-        <button type="button" class="btn btn-primary" onclick="goView('chat')">Vào Truyện</button>
-      </div>
-      <div id="pasteBox-lobby" style="display:none; margin-top:10px;">
-        <div class="field">
-          <label>Dán nội dung JSON save hoặc backup</label>
-          <textarea id="pasteJson-lobby" placeholder='{"player":{"name":"Trần Thiện","pronoun":"anh Thiện"},"turns":[{"user":"...","assistant":"..."}]}'></textarea>
-        </div>
-        <div class="btn-row">
-          <button type="button" class="btn btn-sm btn-primary" onclick="importFromPasteBox('lobby')">Nạp JSON</button>
-          <button type="button" class="btn btn-sm" onclick="togglePasteBox('lobby')">Đóng</button>
-        </div>
-      </div>
-    </div>
+    <div id="lobbyHeroWrap" class="lobby-hero-wrap">
+      <button type="button" class="lobby-bg-btn" onclick="triggerLobbyBgPick()" title="Chọn hoặc xóa ảnh nền sảnh">
+        <span class="lobby-ico">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        </span>
+        <span>ẢNH NỀN</span>
+      </button>
 
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title">Truyện &amp; Lượt chơi</div>
-        <div class="card-sub">Mỗi lượt gọi + trả lời là 1 trang riêng, hỗ trợ sửa, làm lại, streaming và gửi ảnh.</div>
-        <div style="margin-top:10px;">
-          <button type="button" class="btn btn-sm btn-primary" onclick="goView('chat')">Mở màn hình Truyện</button>
-        </div>
+      <div class="lobby-title-block">
+        <h1 class="lobby-main-title">Ark Lite</h1>
+        <div class="lobby-sub-title">MOBILE EDITION</div>
       </div>
-      <div class="card">
-        <div class="card-title">Cấu hình Hệ thống</div>
-        <div class="card-sub">Nhân vật, thế giới, proxy đa đường dẫn (ggchan/OpenAI/Gemini), Safety Settings &amp; Seedream 5 Pro.</div>
-        <div style="margin-top:10px;">
-          <button type="button" class="btn btn-sm" onclick="goView('config')">Mở Cấu hình</button>
+
+      <div class="lobby-menu-stack">
+        <button type="button" class="lobby-action-btn is-primary-glow" onclick="startNewStoryFromLobby()">
+          <span class="lobby-ico">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+          </span>
+          <span>KHỞI TẠO</span>
+        </button>
+
+        <button type="button" class="lobby-action-btn" onclick="goView('companion')">
+          <span class="lobby-ico">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </span>
+          <span>ĐỒNG NHÂN</span>
+        </button>
+
+        <div class="lobby-action-grid">
+          <button type="button" class="lobby-tile-btn" onclick="goView('chat')">
+            <span class="lobby-ico">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </span>
+            <span>TIẾP TỤC</span>
+            <span id="lobbyTurnPill" class="lobby-tile-sub">0 lượt</span>
+          </button>
+
+          <button type="button" class="lobby-tile-btn" onclick="goView('data')">
+            <span class="lobby-ico">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </span>
+            <span>DỮ LIỆU</span>
+            <span class="lobby-tile-sub">Save / Nhập JSON</span>
+          </button>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">P&amp;P Preset</div>
-        <div class="card-sub">Chuỗi mô-đun kết thúc bằng Chat History, &lt;/chathistory&gt; và prefill khởi động.</div>
-        <div style="margin-top:10px;">
-          <button type="button" class="btn btn-sm" onclick="goView('preset')">Mở P&amp;P Preset</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Ngữ cảnh &amp; Dữ liệu</div>
-        <div class="card-sub">Context window, thực thể, quản lý đa slot Save / Tải Save / Hoàn tác / Full Backup.</div>
-        <div class="btn-row" style="margin-top:10px;">
-          <button type="button" class="btn btn-sm" onclick="goView('context')">Ngữ cảnh</button>
-          <button type="button" class="btn btn-sm" onclick="goView('data')">Quản lý Dữ liệu</button>
-        </div>
+
+        <button type="button" class="lobby-action-btn" onclick="goView('config')">
+          <span class="lobby-ico">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          <span>CẤU HÌNH HỆ THỐNG</span>
+        </button>
       </div>
     </div>
   </section>
@@ -572,14 +822,237 @@
     <div class="card">
       <div class="card-head">
         <div>
+          <h2 class="card-title">Prefill khởi động (Assistant)</h2>
+          <div class="card-sub">Bật/tắt gửi kèm nội dung mồi Assistant khi gọi AI (mặc định Tắt để tránh lỗi 400 trên proxy không hỗ trợ prefill).</div>
+        </div>
+        <button type="button" id="cfgPrefillToggleBtn" class="btn btn-sm" onclick="togglePrefillSetting()">Prefill: Tắt</button>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Nội dung Prefill khởi động</label>
+        <textarea id="cfgPrefillInput" style="min-height:64px;" placeholder="<thinking>1. [SYSTEM BOOT &amp; RESOURCE LOADING]"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head" style="flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;">
           <h2 class="card-title">Seedream 5 Pro</h2>
-          <div class="card-sub">Cấu hình endpoint và model tạo ảnh riêng biệt.</div>
+          <div class="card-sub">Cấu hình endpoint, API Key riêng (nếu cần), prompt và trả ảnh trực tiếp.</div>
+        </div>
+        <div class="btn-row" style="width:100%; margin-top:4px;">
+          <button type="button" class="btn btn-sm" onclick="discoverSeedreamModels()">Tải Model</button>
+          <button type="button" class="btn btn-sm btn-success" onclick="testSeedreamConnection()">Kiểm tra</button>
+          <button type="button" class="btn btn-sm btn-primary" onclick="generateSeedreamImage()">Tạo ảnh</button>
+          <button type="button" class="btn btn-sm" onclick="saveConfigFromUI()">Lưu</button>
         </div>
       </div>
       <div class="grid-2">
-        <div class="field"><label>Seedream 5 Pro Endpoint</label><input id="cfgSeedreamUrl" type="text" /></div>
-        <div class="field"><label>Model ảnh</label><input id="cfgSeedreamModel" type="text" /></div>
+        <div class="field"><label>Seedream 5 Pro Endpoint</label><input id="cfgSeedreamUrl" type="text" placeholder="https://.../v1/images/generations" /></div>
+        <div class="field"><label>API Key Seedream (để trống nếu dùng chung Proxy Key)</label><input id="cfgSeedreamKey" type="password" placeholder="Nhập API Key riêng cho Seedream..." /></div>
       </div>
+      <div class="grid-2">
+        <div class="field"><label>Model ảnh</label><input id="cfgSeedreamModel" type="text" /></div>
+        <div class="field">
+          <label>Danh sách model ảnh phát hiện</label>
+          <select id="cfgSeedreamModelSelect" onchange="applyDiscoveredSeedreamModel(this.value)">
+            <option value="">-- Chọn model ảnh --</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Kích thước / Tỷ lệ ảnh</label><input id="cfgSeedreamSize" type="text" placeholder="1024x1024 hoặc 1280x720" /></div>
+      <div class="field">
+        <label>Prompt tạo ảnh Seedream</label>
+        <textarea id="cfgSeedreamPrompt" style="min-height:68px;" placeholder="Mô tả cảnh vật, nhân vật, phong cách ánh sáng để tạo ảnh..."></textarea>
+      </div>
+      <div id="seedreamResultBox" class="attached-preview" style="display:none; flex-direction:column; align-items:stretch;">
+        <img id="seedreamResultImg" src="" alt="Ảnh Seedream tạo ra" style="width:100%; max-width:360px; height:auto; max-height:360px; object-fit:contain; align-self:center;" />
+        <div id="seedreamResultInfo" class="card-sub" style="margin-top:6px;"></div>
+        <div class="btn-row" style="margin-top:8px;">
+          <button type="button" class="btn btn-sm btn-primary" onclick="downloadSeedreamImage()">Tải ảnh về máy</button>
+          <button type="button" class="btn btn-sm btn-success" onclick="attachSeedreamToChatTurn()">Đưa vào lượt truyện</button>
+          <button type="button" class="btn btn-sm btn-danger" onclick="clearSeedreamResult()">Xóa ảnh trả về</button>
+        </div>
+      </div>
+      <div id="seedreamLog" class="log-box" style="max-height:110px; margin-top:8px;">Sẵn sàng tạo ảnh Seedream 5 Pro...</div>
+    </div>
+  </section>
+
+  <!-- 4B. ĐỒNG NHÂN ĐẦY ĐỦ -->
+  <section id="screen-companion" class="ark-screen">
+    <div class="card">
+      <div class="card-head">
+        <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+          <button type="button" class="btn btn-sm" onclick="goView('lobby')">←</button>
+          <div>
+            <h2 class="card-title">Đồng Nhân</h2>
+            <div class="card-sub">Tra cứu tác phẩm gốc trên mạng, phân tích thế giới, quy tắc, nhân vật chính &amp; NPC.</div>
+          </div>
+        </div>
+        <button type="button" id="dnAiLookupBtn" class="btn btn-sm btn-primary" onclick="aiLookupOriginalWork()">AI Tra Tác Phẩm Gốc</button>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Tên tác phẩm gốc / Từ khóa tra mạng</label>
+          <input id="dnSourceQueryInput" type="text" placeholder="Ví dụ: Harry Potter, Tây Du Ký, Ma Đạo Tổ Sư..." />
+        </div>
+        <div class="field">
+          <label>Tên bản Đồng Nhân / AU</label>
+          <input id="dnWorldTitleInput" type="text" placeholder="Ví dụ: Hogwarts Hiện Đại, AU Giang Hồ..." />
+        </div>
+      </div>
+
+      <div class="field">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px;">
+          <label style="margin:0;">NỘI DUNG TÁC PHẨM GỐC</label>
+          <span id="dnResearchBadge" class="pill">Chưa tra cứu</span>
+        </div>
+        <textarea id="dnSourceContentInput" style="min-height:96px;" placeholder="Dán nội dung truyện, tóm tắt cốt truyện hoặc kết quả AI tra tác phẩm gốc trên mạng vào đây..."></textarea>
+      </div>
+
+      <div class="btn-row" style="margin-bottom:8px;">
+        <button type="button" id="dnAnalyzeBtn" class="btn btn-sm btn-primary" style="flex:1;" onclick="aiAnalyzeSourceWork()">PHÂN TÍCH TÁC PHẨM</button>
+        <button type="button" class="btn btn-sm" onclick="aiLookupOriginalWork()">Lấy nguồn trên mạng</button>
+      </div>
+      <div id="dnStatusLog" class="log-box" style="max-height:110px;">Sẵn sàng tra cứu nguồn trên mạng hoặc phân tích tác phẩm gốc...</div>
+    </div>
+
+    <div class="card">
+      <div class="dn-subtabs">
+        <button type="button" class="dn-subtab-btn is-active" data-dntab="mc" onclick="switchDnTab('mc')">Nhân vật chính</button>
+        <button type="button" class="dn-subtab-btn" data-dntab="world" onclick="switchDnTab('world')">Thế giới &amp; Quy tắc</button>
+        <button type="button" class="dn-subtab-btn" data-dntab="npcs" onclick="switchDnTab('npcs')">NPC đồng nhân</button>
+      </div>
+
+      <!-- TAB 1: NHÂN VẬT CHÍNH -->
+      <div id="dnPane-mc" class="dn-pane is-active">
+        <div class="grid-2">
+          <div class="field">
+            <label>Nguồn nhân vật chính</label>
+            <select id="dnMcSourceMode" onchange="onMcSourceModeChange(this.value)">
+              <option value="custom">NVC tự tạo (giữ nguyên khi phân tích)</option>
+              <option value="canon">Chọn nhân vật trong nguyên tác</option>
+            </select>
+          </div>
+          <div class="field" id="dnCanonPickField" style="display:none;">
+            <label>Chọn nhân vật từ nguyên tác</label>
+            <select id="dnCanonPickSelect" onchange="onPickCanonAsMc(this.value)">
+              <option value="">-- Chọn nhân vật nguyên tác / NPC --</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Tên nhân vật chính</label>
+            <input id="dnMcName" type="text" placeholder="Để trống nếu muốn AI tự đặt tên nhân vật..." />
+          </div>
+          <div class="field">
+            <label>Xưng hô</label>
+            <input id="dnMcPronoun" type="text" placeholder="Để trống nếu muốn AI tự quyết định xưng hô..." />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Dạng vai trò nhân vật chính</label>
+            <select id="dnMcRoleType" onchange="onMcRoleTypeChange(this.value)">
+              <option value="transmigrator">Người xuyên không / Chuyển sinh</option>
+              <option value="powerhouse">Đại năng / Cường giả thế giới</option>
+              <option value="custom">Tự tạo nhân vật chính</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Nhân vật chính nguyên tác (vẫn có trong truyện)</label>
+            <input id="dnCanonMcName" type="text" placeholder="VD: Hàn Lập, Harry Potter, Tôn Ngộ Không..." />
+          </div>
+        </div>
+        <div class="field">
+          <label>Thân phận xuyên không / Đại năng / Lai lịch</label>
+          <textarea id="dnMcOriginRole" style="min-height:64px;" placeholder="Mô tả thân phận xuyên không, cơ duyên, hoặc cảnh giới/lai lịch đại năng..."></textarea>
+        </div>
+        <div class="field">
+          <label>Mối liên hệ với nhân vật chính nguyên tác</label>
+          <textarea id="dnCanonMcRelation" style="min-height:58px;" placeholder="Ví dụ: Nhân vật chính nguyên tác vẫn tồn tại song song; hai bên đồng hành, gặp gỡ hoặc tạo biến số..."></textarea>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Giới tính</label>
+            <input id="dnMcGender" type="text" placeholder="Nam / Nữ / Khác..." />
+          </div>
+          <div class="field">
+            <label>Tuổi</label>
+            <input id="dnMcAge" type="text" placeholder="VD: 20" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Tính cách</label>
+          <textarea id="dnMcPersonality" style="min-height:76px;" placeholder="Mô tả tính cách nhân vật..."></textarea>
+        </div>
+        <div class="field">
+          <label>Ngoại hình</label>
+          <textarea id="dnMcAppearance" style="min-height:76px;" placeholder="Mô tả ngoại hình nhân vật..."></textarea>
+        </div>
+      </div>
+
+      <!-- TAB 2: THẾ GIỚI & QUY TẮC -->
+      <div id="dnPane-world" class="dn-pane">
+        <div class="field">
+          <label>Bối cảnh &amp; Không gian thế giới</label>
+          <textarea id="dnWorldSetting" style="min-height:84px;" placeholder="Thời đại, địa điểm, phe phái, bối cảnh lịch sử hoặc giả tưởng..."></textarea>
+        </div>
+        <div class="field">
+          <label>Quy tắc thế giới &amp; Hệ thống sức mạnh / Luật lệ</label>
+          <textarea id="dnWorldRules" style="min-height:92px;" placeholder="Quy tắc vận hành thế giới, giới hạn năng lực, cấm kỵ, điều kiện kích hoạt, luật nhân quả..."></textarea>
+        </div>
+      </div>
+
+      <!-- TAB 3: NPC ĐỒNG NHÂN -->
+      <div id="dnPane-npcs" class="dn-pane">
+        <div class="grid-2">
+          <div class="field">
+            <label>Tên NPC / Nhân vật đồng nhân</label>
+            <input id="dnNpcName" type="text" placeholder="Ví dụ: Hermione Granger, Đường Tăng..." />
+          </div>
+          <div class="field">
+            <label>Vai trò / Mối quan hệ</label>
+            <input id="dnNpcRole" type="text" placeholder="Đồng minh, sư phụ, đối thủ, tri kỷ..." />
+          </div>
+        </div>
+        <div class="field">
+          <label>Tính cách, ngoại hình &amp; tương tác với nhân vật chính</label>
+          <textarea id="dnNpcDesc" style="min-height:72px;" placeholder="Mô tả tính cách, năng lực và cách NPC này đối xử với nhân vật chính..."></textarea>
+        </div>
+        <div class="btn-row" style="margin-bottom:10px;">
+          <button type="button" class="btn btn-sm btn-success" onclick="addFanficNpc()">+ Thêm NPC</button>
+          <button type="button" class="btn btn-sm btn-primary" onclick="saveCompanionFromUI()">Lưu hồ sơ Đồng nhân</button>
+        </div>
+        <div id="dnNpcListContainer"></div>
+      </div>
+
+      <div class="dn-dock-bar">
+        <button type="button" id="dnQuickGenBtn" class="dn-dock-btn is-ai" onclick="aiQuickGenerateFanfic()">
+          <span>AI KHỞI TẠO</span>
+          <span>NHANH</span>
+        </button>
+        <button type="button" class="dn-dock-btn" onclick="exportFanficPackage()">
+          <span>FILE ĐN</span>
+          <span>Xuất / Nạp</span>
+        </button>
+        <button type="button" class="dn-dock-btn is-go" onclick="enterCompanionWorld()">
+          <span>ÁP DỤNG &amp;</span>
+          <span>VÀO TRUYỆN</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Danh sách Thế giới Đồng nhân đã lưu</div>
+          <div class="card-sub">Chọn nhanh hoặc tạo thêm hồ sơ đồng nhân khác.</div>
+        </div>
+        <button type="button" class="btn btn-sm btn-success" onclick="createNewFanficProfile()">+ Hồ sơ mới</button>
+      </div>
+      <div id="companionListContainer"></div>
     </div>
   </section>
 
@@ -638,6 +1111,7 @@
         <button type="button" class="btn btn-sm btn-success" onclick="downloadLatestSave()">Tải Save (.json)</button>
         <button type="button" class="btn btn-sm" onclick="downloadFullBackup()">Xuất Full Backup</button>
         <button type="button" class="btn btn-sm btn-warn" onclick="undoCheckpoint()">Hoàn tác</button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="resetCleanData()">Reset sạch dữ liệu</button>
       </div>
       <div id="pasteBox-data" style="display:none; margin-top:10px;">
         <div class="field">
@@ -779,21 +1253,15 @@
 
   function createDefaultModules() {
     return [
-      { id: "m1", name: "01. Hệ thống Nhập vai & Xưng hô", enabled: true, content: "Bạn là người kể chuyện nhập vai tiếng Việt mạch lạc, tự nhiên. Luôn giữ đúng tên nhân vật chính theo hồ sơ (Trần Thiện / anh Thiện), phân tách rõ lời thoại và hành động/biểu cảm, không gõ sai dấu hay dính chữ." },
-      { id: "m2", name: "02. Tawa / Omega P&P Engine", enabled: true, content: "Kể diễn biến chi tiết, bám sát bối cảnh và tâm lý nhân vật. Giữ mạch kết thúc phân cảnh liền mạch ngay trong nội dung câu chuyện." },
+      { id: "m1", name: "01. Hệ thống Nhập vai & Xưng hô", enabled: true, content: "Bạn là người kể chuyện nhập vai tiếng Việt mạch lạc, tự nhiên, kể chi tiết và sâu sắc. Nếu có hồ sơ/ngữ cảnh thì bám theo đó; nếu chưa gán tên hoặc xưng hô cụ thể thì tự quyết định tên nhân vật, xưng hô và cách xưng hô giữa các nhân vật sao cho hợp bối cảnh, tự nhiên, nhất quán, phân tách rõ lời thoại và hành động/biểu cảm, không gõ sai dấu hay dính chữ." },
+      { id: "m2", name: "02. Tawa / Omega P&P Engine", enabled: true, content: "Kể diễn biến chi tiết, mở rộng từng hành động, lời thoại, phản ứng và không khí bối cảnh một cách sống động, đầy đặn (ưu tiên độ dài phong phú theo mục tiêu ngữ cảnh thay vì trả lời ngắn gọn). Giữ mạch kết thúc phân cảnh liền mạch ngay trong nội dung câu chuyện." },
       { id: "m3", name: "03. Chat History", enabled: true, content: "Chat History" },
       { id: "m4", name: "04. Đóng thẻ </chathistory>", enabled: true, content: "</chathistory>" }
     ];
   }
 
   function createSampleTurns() {
-    return [
-      {
-        id: "sample_1",
-        user: "Trần Thiện bước vào quán cà phê cuối phố, ngồi xuống chiếc bàn gỗ gần khung cửa kính nhìn ra đường.",
-        assistant: "<thinking>1. [SYSTEM BOOT & RESOURCE LOADING]\nMở đầu khung cảnh nhẹ nhàng tại quán cà phê cuối phố.</thinking>\n\nÁnh nắng chiều muộn xuyên qua tán cây ngoài phố, hắt lên mặt bàn gỗ sẫm màu nơi anh Thiện vừa ngồi xuống. Tiếng nhạc acoustic vang khẽ trong không gian yên tĩnh, đủ để người ta thả lỏng sau một ngày dài.\n\n\"Cho anh một ly bạc xỉu ít đường nhé.\" Anh Thiện mỉm cười nhẹ, ánh mắt hướng ra dòng người qua lại chậm rãi bên ngoài.\n\n<state_update>Bối cảnh: Quán cà phê cuối phố • Thời điểm: Chiều muộn</state_update>"
-      }
-    ];
+    return [];
   }
 
   function createInitialState() {
@@ -805,7 +1273,8 @@
       showRawTags: false,
       showPostMeta: false,
       hideBottomNav: false,
-      player: { name: "Trần Thiện", pronoun: "anh Thiện" },
+      lobbyBgDataUrl: "",
+      player: { name: "", pronoun: "" },
       world: { name: "Thế giới hiện đại" },
       config: {
         proxyUrl: "",
@@ -818,24 +1287,38 @@
       },
       tawaPreset: {
         modules: createDefaultModules(),
+        prefillEnabled: false,
         prefill: "<thinking>1. [SYSTEM BOOT & RESOURCE LOADING]"
       },
       context: {
         historyTurns: 12,
         targetLength: "900 - 1800 từ",
-        entitiesNote: "Trần Thiện (xưng hô: anh Thiện) — bối cảnh hiện đại, nhịp kể chậm rãi, chi tiết."
+        entitiesNote: "Bối cảnh hiện đại, nhịp kể chậm rãi, chi tiết; tên và xưng hô do AI tự quyết định hoặc theo ngữ cảnh người dùng."
       },
-      turns: sampleTurns,
-      slots: [
+      turns: [],
+      slots: [],
+      companions: [
         {
-          id: "slot_sample",
-          name: "Trần Thiện — Mở đầu (1 lượt)",
-          savedAt: new Date().toISOString(),
-          turns: JSON.parse(JSON.stringify(sampleTurns)),
-          player: { name: "Trần Thiện", pronoun: "anh Thiện" },
-          world: { name: "Thế giới hiện đại" }
+          id: "comp_default_1",
+          name: "Đồng nhân mặc định",
+          role: "Đồng nhân / AU",
+          sourceQuery: "",
+          sourceContent: "",
+          mc: {
+            name: "",
+            pronoun: "",
+            gender: "Nam",
+            age: "24",
+            personality: "Điềm tĩnh, quan sát tinh tế, thẳng thắn.",
+            appearance: "Dáng người gọn gàng, ánh mắt trầm ổn, phong thái tự nhiên."
+          },
+          worldSetting: "Thế giới hiện đại với nhiều tầng bí mật đan xen.",
+          worldRules: "Mọi hành động và năng lực đều có nguyên nhân, hậu quả và cái giá tương xứng với bối cảnh.",
+          npcs: [],
+          note: "Giữ mạch tương tác tự nhiên, bám sát bối cảnh và tâm lý nhân vật."
         }
       ],
+      activeCompanionId: "comp_default_1",
       checkpoint: null
     };
   }
@@ -857,7 +1340,11 @@
         slots: state.slots,
         checkpoint: state.checkpoint,
         streamEnabled: state.streamEnabled,
-        hideBottomNav: state.hideBottomNav
+        hideBottomNav: state.hideBottomNav,
+        lobbyBgDataUrl: state.lobbyBgDataUrl || "",
+        companions: state.companions || [],
+        companionStories: state.companionStories || {},
+        activeCompanionId: state.activeCompanionId || ""
       }));
     } catch (_) {}
   }
@@ -868,21 +1355,35 @@
       if (!raw) return;
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === "object") {
-        if (parsed.player) state.player = { ...state.player, ...parsed.player };
+        if (parsed.player) {
+          state.player = { ...state.player, ...parsed.player };
+          if (state.player.name === "Trần Thiện") state.player.name = "";
+          if (state.player.pronoun === "anh Thiện") state.player.pronoun = "";
+        }
         if (parsed.world) state.world = { ...state.world, ...parsed.world };
         if (parsed.config) state.config = { ...state.config, ...parsed.config };
         if (parsed.tawaPreset && Array.isArray(parsed.tawaPreset.modules)) {
           state.tawaPreset = {
             modules: parsed.tawaPreset.modules,
+            prefillEnabled: typeof parsed.tawaPreset.prefillEnabled === "boolean" ? parsed.tawaPreset.prefillEnabled : false,
             prefill: parsed.tawaPreset.prefill || "<thinking>1. [SYSTEM BOOT & RESOURCE LOADING]"
           };
         }
-        if (parsed.context) state.context = { ...state.context, ...parsed.context };
+        if (parsed.context) {
+          state.context = { ...state.context, ...parsed.context };
+          if (typeof state.context.entitiesNote === "string" && /Trần Thiện|anh Thiện/i.test(state.context.entitiesNote)) {
+            state.context.entitiesNote = "Bối cảnh hiện đại, nhịp kể chậm rãi, chi tiết; tên và xưng hô do AI tự quyết định hoặc theo ngữ cảnh người dùng.";
+          }
+        }
         if (Array.isArray(parsed.turns) && parsed.turns.length) state.turns = parsed.turns;
         if (Array.isArray(parsed.slots) && parsed.slots.length) state.slots = parsed.slots;
         if (parsed.checkpoint) state.checkpoint = parsed.checkpoint;
         if (typeof parsed.streamEnabled === "boolean") state.streamEnabled = parsed.streamEnabled;
         if (typeof parsed.hideBottomNav === "boolean") state.hideBottomNav = parsed.hideBottomNav;
+        if (typeof parsed.lobbyBgDataUrl === "string") state.lobbyBgDataUrl = parsed.lobbyBgDataUrl;
+        if (Array.isArray(parsed.companions) && parsed.companions.length) state.companions = parsed.companions;
+        if (parsed.companionStories && typeof parsed.companionStories === "object") state.companionStories = parsed.companionStories;
+        if (typeof parsed.activeCompanionId === "string") state.activeCompanionId = parsed.activeCompanionId;
       }
     } catch (_) {}
   }
@@ -910,9 +1411,10 @@
   }
 
   window.goView = function(viewName) {
-    const valid = ["lobby", "chat", "config", "preset", "context", "data"];
+    const valid = ["lobby", "chat", "config", "companion", "preset", "context", "data"];
     const target = valid.includes(viewName) ? viewName : "lobby";
     state.activeView = target;
+    document.body.classList.toggle("is-lobby-mode", target === "lobby");
 
     document.querySelectorAll(".ark-screen").forEach((sec) => {
       const id = sec.id.replace("screen-", "");
@@ -926,6 +1428,7 @@
       lobby: "Sảnh chính • Sẵn sàng",
       chat: "Truyện • 1 Lượt = 1 Trang",
       config: "Cấu hình • Proxy & Seedream 5 Pro",
+      companion: "Đồng nhân • Tạo Thế giới Đồng nhân",
       preset: "P&P Preset • Tawa / Omega",
       context: "Ngữ cảnh • Context & Thực thể",
       data: "Dữ liệu • Slots & Tải Save"
@@ -934,6 +1437,7 @@
     if (topbarStatus) topbarStatus.textContent = labels[target] || "Ark Lite";
 
     if (target === "config") syncConfigToUI();
+    if (target === "companion") syncCompanionToUI();
     if (target === "preset") syncPresetToUI();
     if (target === "context") syncContextToUI();
     if (target === "data") renderSlots();
@@ -1003,6 +1507,36 @@
     return { mainText: mainPart, metaText: metaPart.trim() };
   }
 
+  function appendStyledRuns(targetEl, rawSegment) {
+    const seg = String(rawSegment || "");
+    if (!seg) return;
+    // Match quoted dialogue ("...", “...”, ‘...’) or standalone *thought* blocks
+    const tokenRe = /("[^"\n]+"|“[^”\n]+”|‘[^’\n]+’)/g;
+    let lastIdx = 0;
+    let m;
+    while ((m = tokenRe.exec(seg)) !== null) {
+      if (m.index > lastIdx) {
+        const before = seg.slice(lastIdx, m.index);
+        const actSpan = document.createElement("span");
+        actSpan.className = "rp-action";
+        actSpan.textContent = before;
+        targetEl.appendChild(actSpan);
+      }
+      const dlgSpan = document.createElement("span");
+      dlgSpan.className = "rp-dialogue";
+      dlgSpan.textContent = m[0];
+      targetEl.appendChild(dlgSpan);
+      lastIdx = tokenRe.lastIndex;
+    }
+    if (lastIdx < seg.length) {
+      const rest = seg.slice(lastIdx);
+      const actSpan = document.createElement("span");
+      actSpan.className = "rp-action";
+      actSpan.textContent = rest;
+      targetEl.appendChild(actSpan);
+    }
+  }
+
   function renderParagraphs(container, text) {
     container.innerHTML = "";
     const parts = String(text || "")
@@ -1018,7 +1552,15 @@
     }
     for (const part of parts) {
       const p = document.createElement("p");
-      p.textContent = part;
+      // If a line starts with inner thought markers like [Suy nghĩ: ...] or (Nghĩ thầm: ...)
+      if (/^(\[\s*(suy nghĩ|nghĩ thầm|nội tâm)[^\]]*\]|\(\s*(suy nghĩ|nghĩ thầm|nội tâm)[^)]*\))/i.test(part)) {
+        const thSpan = document.createElement("span");
+        thSpan.className = "rp-thought";
+        thSpan.textContent = part;
+        p.appendChild(thSpan);
+      } else {
+        appendStyledRuns(p, part);
+      }
       container.appendChild(p);
     }
   }
@@ -1099,11 +1641,21 @@
     userCard.appendChild(uHead);
 
     if (turn.imageData) {
+      const imgWrap = document.createElement("div");
+      imgWrap.className = "turn-img-wrap";
       const img = document.createElement("img");
       img.className = "turn-img";
+      img.style.marginBottom = "6px";
       img.src = turn.imageData;
       img.alt = turn.imageCaption || "Ảnh đính kèm";
-      userCard.appendChild(img);
+      imgWrap.appendChild(img);
+      const dlImgBtn = document.createElement("button");
+      dlImgBtn.type = "button";
+      dlImgBtn.className = "btn btn-sm";
+      dlImgBtn.textContent = "Tải ảnh về máy";
+      dlImgBtn.onclick = () => window.downloadImageSource(turn.imageData, "luot_" + (idx + 1) + ".png");
+      imgWrap.appendChild(dlImgBtn);
+      userCard.appendChild(imgWrap);
       if (turn.imageCaption) {
         const cap = document.createElement("div");
         cap.className = "card-sub";
@@ -1274,6 +1826,50 @@
 
   function buildMessagesPayload(turnIndex) {
     const msgs = [];
+    const activeComp = getActiveCompanion();
+    if (activeComp) {
+      const npcLines = Array.isArray(activeComp.npcs) && activeComp.npcs.length
+        ? activeComp.npcs.map((n) => "- " + (n.name || "NPC") + (n.role ? " (" + n.role + ")" : "") + ": " + (n.desc || "")).join("\n")
+        : "";
+      const mc = activeComp.mc || {};
+      const roleLabels = {
+        transmigrator: "Người xuyên không / Chuyển sinh",
+        powerhouse: "Đại năng / Cường giả thế giới",
+        custom: "Nhân vật chính tự tạo"
+      };
+      const mcRoleText = roleLabels[mc.roleType] || mc.roleType || "";
+      const mcSummary = [
+        mc.name ? ("Tên: " + mc.name) : "",
+        mc.pronoun ? ("Xưng hô: " + mc.pronoun) : "",
+        mcRoleText ? ("Dạng vai trò: " + mcRoleText) : "",
+        mc.originRole ? ("Thân phận/Lai lịch: " + mc.originRole) : "",
+        mc.canonMcName ? ("Nhân vật chính nguyên tác song song: " + mc.canonMcName) : "",
+        mc.canonMcRelation ? ("Liên hệ NV chính gốc: " + mc.canonMcRelation) : "",
+        mc.gender ? ("Giới tính: " + mc.gender) : "",
+        mc.age ? ("Tuổi: " + mc.age) : "",
+        mc.personality ? ("Tính cách: " + mc.personality) : "",
+        mc.appearance ? ("Ngoại hình: " + mc.appearance) : ""
+      ].filter(Boolean).join(" | ");
+
+      const compSummary = [
+        "[HỒ SƠ ĐỒNG NHÂN ĐANG ÁP DỤNG]",
+        activeComp.name ? ("Tên bản đồng nhân / thế giới: " + activeComp.name) : "",
+        activeComp.sourceQuery ? ("Tác phẩm gốc / Thể loại: " + activeComp.sourceQuery) : "",
+        mcSummary ? ("Nhân vật chính (người chơi tự tạo) -> " + mcSummary) : "",
+        (mc.canonMcName || mc.canonMcRelation)
+          ? ("Thiết lập nhân vật gốc: Nhân vật chính nguyên tác" + (mc.canonMcName ? (" (" + mc.canonMcName + ")") : "") + " vẫn tồn tại trong thế giới, đồng thời tôn trọng nhân vật chính tự tạo của người chơi.")
+          : "",
+                activeComp.worldSetting ? ("Bối cảnh & Thế giới: " + activeComp.worldSetting) : "",
+        activeComp.worldRules ? ("Quy tắc thế giới: " + activeComp.worldRules) : "",
+        npcLines ? ("Danh sách NPC đồng nhân:\n" + npcLines) : "",
+        activeComp.sourceContent ? ("Tư liệu tác phẩm gốc:\n" + activeComp.sourceContent.slice(0, 2400)) : "",
+        activeComp.note ? ("Ghi chú bổ sung: " + activeComp.note) : ""
+      ].filter(Boolean).join("\n");
+      if (compSummary.trim() !== "[HỒ SƠ ĐỒNG NHÂN ĐANG ÁP DỤNG]") {
+        msgs.push({ role: "system", content: compSummary });
+      }
+    }
+
     for (const m of state.tawaPreset.modules) {
       if (!m || !m.enabled) continue;
       if (m.content === "Chat History") {
@@ -1287,6 +1883,16 @@
       } else if (m.content) {
         msgs.push({ role: "system", content: m.content });
       }
+    }
+
+    const pacingLines = [
+      "[YÊU CẦU ĐỘ DÀI & DIỄN BIẾN]",
+      "Mục tiêu độ dài hồi đáp: " + (state.context && state.context.targetLength ? state.context.targetLength : "900 - 1800 từ") + ".",
+      "Hãy viết đầy đủ, chậm rãi, giàu chi tiết hành động, đối thoại, biểu cảm, không gian và nội tâm nhân vật. Không tóm tắt ngắn gọn hay cắt cụt diễn biến.",
+      state.context && state.context.entitiesNote ? ("Ghi chú thực thể & bối cảnh: " + state.context.entitiesNote) : ""
+    ].filter(Boolean).join("\n");
+    if (pacingLines) {
+      msgs.push({ role: "system", content: pacingLines });
     }
 
     const cur = state.turns[turnIndex];
@@ -1308,7 +1914,7 @@
       msgs.push({ role: "user", content: userText });
     }
 
-    if (state.tawaPreset.prefill) {
+    if (state.tawaPreset.prefillEnabled && state.tawaPreset.prefill) {
       msgs.push({ role: "assistant", content: state.tawaPreset.prefill });
     }
     return msgs;
@@ -1362,7 +1968,7 @@
         merged.push({ ...item });
       }
     }
-    if (includePrefill && state.tawaPreset.prefill && state.tawaPreset.prefill.trim()) {
+    if (includePrefill && state.tawaPreset.prefillEnabled && state.tawaPreset.prefill && state.tawaPreset.prefill.trim()) {
       const last = merged[merged.length - 1];
       if (!last || last.role !== "assistant") {
         merged.push({ role: "assistant", content: state.tawaPreset.prefill.trim() });
@@ -1383,7 +1989,7 @@
     if (!targetTurn) return;
 
     if (!baseUrl) {
-      targetTurn.assistant = "[Chế độ bản xem trước cục bộ] Chưa cấu hình Proxy URL nên hệ thống ghi nhận lượt của " + (state.player.pronoun || "anh Thiện") + ":\n\n\"" + (targetTurn.user || "Đã gửi ảnh đính kèm") + "\"\n\nHãy vào mục Cấu hình để nhập Proxy URL nếu muốn gọi mô hình trực tuyến, hoặc bấm Sửa để chỉnh nội dung trực tiếp.";
+      targetTurn.assistant = "[Chế độ bản xem trước cục bộ] Chưa cấu hình Proxy URL nên hệ thống ghi nhận lượt của " + (state.player.pronoun || "nhân vật") + ":\n\n\"" + (targetTurn.user || "Đã gửi ảnh đính kèm") + "\"\n\nHãy vào mục Cấu hình để nhập Proxy URL nếu muốn gọi mô hình trực tuyến, hoặc bấm Sửa để chỉnh nội dung trực tiếp.";
       persistState();
       renderChatPage();
       setGenStatus("Bản xem trước cục bộ");
@@ -1400,10 +2006,21 @@
     const isGemini = proto === "gemini" || (proto === "auto" && (/generativelanguage\.googleapis\.com/i.test(baseUrl) || /:(generateContent|streamGenerateContent)/i.test(baseUrl)));
     const endpoints = buildEndpointCandidates(baseUrl, model, state.streamEnabled, isGemini);
     const rawMessages = buildMessagesPayload(turnIndex);
-    const attemptVariants = [
-      { msgs: normalizeMessagesForRequest(rawMessages, true), withSafety: true, label: "chuẩn" },
-      { msgs: normalizeMessagesForRequest(rawMessages, false), withSafety: false, label: "tương thích" }
-    ];
+    const hasPrefill = Boolean(state.tawaPreset && state.tawaPreset.prefillEnabled && state.tawaPreset.prefill && state.tawaPreset.prefill.trim());
+    const hasGeminiSafety = Boolean(isGemini || /gemini/i.test(model));
+    const attemptVariants = [];
+    if (hasPrefill || hasGeminiSafety) {
+      attemptVariants.push({
+        msgs: normalizeMessagesForRequest(rawMessages, true),
+        withSafety: hasGeminiSafety,
+        label: "chuẩn"
+      });
+    }
+    attemptVariants.push({
+      msgs: normalizeMessagesForRequest(rawMessages, false),
+      withSafety: false,
+      label: "tương thích"
+    });
 
     let lastErr = "";
     for (const url of endpoints) {
@@ -1419,6 +2036,7 @@
         const sysPrompts = messages.filter((m) => m.role === "system").map((m) => typeof m.content === "string" ? m.content : "").filter(Boolean);
         const nonSys = messages.filter((m) => m.role !== "system");
 
+        const targetMaxTokens = 65536;
         const body = isGemini
           ? {
               ...(sysPrompts.length ? { systemInstruction: { parts: [{ text: sysPrompts.join("\n\n") }] } } : {}),
@@ -1430,11 +2048,15 @@
                       : { text: c.text || "" })
                   : [{ text: typeof m.content === "string" ? m.content : JSON.stringify(m.content) }]
               })),
+              generationConfig: {
+                maxOutputTokens: targetMaxTokens
+              },
               ...(variant.withSafety ? { safetySettings: state.config.safetySettings || DEFAULT_SAFETY } : {})
             }
           : {
               model: model,
               messages: messages,
+              max_tokens: targetMaxTokens,
               stream: Boolean(state.streamEnabled),
               ...(variant.withSafety && /gemini/i.test(model) ? { safetySettings: state.config.safetySettings || DEFAULT_SAFETY } : {})
             };
@@ -1594,7 +2216,16 @@
     const protoEl = document.getElementById("cfgApiProtocol");
     if (protoEl) protoEl.value = state.config.apiProtocol || "openai";
     document.getElementById("cfgSeedreamUrl").value = state.config.seedreamUrl || "";
+    const sdKeyEl = document.getElementById("cfgSeedreamKey");
+    if (sdKeyEl) sdKeyEl.value = state.config.seedreamApiKey || "";
     document.getElementById("cfgSeedreamModel").value = state.config.seedreamModel || "seedream-5.0-pro";
+    const sdSizeEl = document.getElementById("cfgSeedreamSize");
+    if (sdSizeEl) sdSizeEl.value = state.config.seedreamSize || "1024x1024";
+    const sdPromptEl = document.getElementById("cfgSeedreamPrompt");
+    if (sdPromptEl) sdPromptEl.value = state.config.seedreamPrompt || "";
+    updatePrefillToggleUI();
+    const cfgPfInput = document.getElementById("cfgPrefillInput");
+    if (cfgPfInput) cfgPfInput.value = state.tawaPreset.prefill || "";
     const s = state.config.safetySettings || DEFAULT_SAFETY;
     document.getElementById("safeSex").value = s[0]?.threshold || "BLOCK_NONE";
     document.getElementById("safeHate").value = s[1]?.threshold || "BLOCK_NONE";
@@ -1603,8 +2234,8 @@
   }
 
   window.saveConfigFromUI = function() {
-    state.player.name = (document.getElementById("cfgPlayerName").value || "").trim() || "Trần Thiện";
-    state.player.pronoun = (document.getElementById("cfgPlayerPronoun").value || "").trim() || "anh Thiện";
+    state.player.name = (document.getElementById("cfgPlayerName").value || "").trim() || "";
+    state.player.pronoun = (document.getElementById("cfgPlayerPronoun").value || "").trim() || "nhân vật";
     state.world.name = (document.getElementById("cfgWorldName").value || "").trim() || "Thế giới hiện đại";
     state.config.proxyUrl = (document.getElementById("cfgProxyUrl").value || "").trim();
     state.config.proxyKey = (document.getElementById("cfgProxyKey").value || "").trim();
@@ -1612,15 +2243,27 @@
     const protoEl = document.getElementById("cfgApiProtocol");
     state.config.apiProtocol = protoEl ? protoEl.value : "openai";
     state.config.seedreamUrl = (document.getElementById("cfgSeedreamUrl").value || "").trim();
+    const sdKeySave = document.getElementById("cfgSeedreamKey");
+    if (sdKeySave) state.config.seedreamApiKey = sdKeySave.value.trim();
     state.config.seedreamModel = (document.getElementById("cfgSeedreamModel").value || "").trim() || "seedream-5.0-pro";
+    const sdSizeSave = document.getElementById("cfgSeedreamSize");
+    if (sdSizeSave) state.config.seedreamSize = sdSizeSave.value.trim() || "1024x1024";
+    const sdPromptSave = document.getElementById("cfgSeedreamPrompt");
+    if (sdPromptSave) state.config.seedreamPrompt = sdPromptSave.value;
     state.config.safetySettings = [
       { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: document.getElementById("safeSex").value.trim() || "BLOCK_NONE" },
       { category: "HARM_CATEGORY_HATE_SPEECH", threshold: document.getElementById("safeHate").value.trim() || "BLOCK_NONE" },
       { category: "HARM_CATEGORY_HARASSMENT", threshold: document.getElementById("safeHarass").value.trim() || "BLOCK_NONE" },
       { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: document.getElementById("safeDanger").value.trim() || "BLOCK_NONE" }
     ];
+    const cfgPfInput = document.getElementById("cfgPrefillInput");
+    if (cfgPfInput) {
+      state.tawaPreset.prefill = cfgPfInput.value;
+      const presetPfInput = document.getElementById("presetPrefillInput");
+      if (presetPfInput) presetPfInput.value = cfgPfInput.value;
+    }
     persistState();
-    showBanner("Đã lưu Cấu hình, Safety Settings và Seedream 5 Pro.");
+    showBanner("Đã lưu Cấu hình, Prefill, Safety Settings và Seedream 5 Pro.");
   };
 
   window.resetSafetyBlockNone = function() {
@@ -1667,6 +2310,317 @@
     persistState();
   };
 
+
+  let latestSeedreamImageUrl = "";
+
+  function appendSeedreamLog(line) {
+    const box = document.getElementById("seedreamLog");
+    if (!box) return;
+    const ts = new Date().toLocaleTimeString("vi-VN", { hour12: false });
+    box.textContent = (box.textContent ? box.textContent + "\n" : "") + "[" + ts + "] " + line;
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function renderSeedreamResult(dataUrl, infoText) {
+    latestSeedreamImageUrl = dataUrl || "";
+    const box = document.getElementById("seedreamResultBox");
+    const img = document.getElementById("seedreamResultImg");
+    const info = document.getElementById("seedreamResultInfo");
+    if (!box || !img) return;
+    if (dataUrl) {
+      img.src = dataUrl;
+      if (info) info.textContent = infoText || "Đã nhận ảnh từ Seedream 5 Pro.";
+      box.style.display = "flex";
+    } else {
+      img.src = "";
+      if (info) info.textContent = "";
+      box.style.display = "none";
+    }
+  }
+
+  window.clearSeedreamResult = function() {
+    renderSeedreamResult("", "");
+  };
+
+  window.downloadImageSource = function(imgSrc, filename) {
+    if (!imgSrc) {
+      showBanner("Không có ảnh để tải về máy.", "err");
+      return;
+    }
+    const safeName = (filename || ("ark_image_" + Date.now() + ".png")).replace(/[^a-zA-Z0-9._-]+/g, "_");
+    if (/^https?:\/\//i.test(imgSrc) && !imgSrc.startsWith("data:")) {
+      fetch(imgSrc)
+        .then((r) => r.ok ? r.blob() : Promise.reject(new Error("HTTP " + r.status)))
+        .then((blob) => {
+          const objUrl = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = objUrl;
+          a.download = safeName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(objUrl), 1200);
+          showBanner("Đã tải ảnh về máy: " + safeName);
+        })
+        .catch(() => {
+          window.open(imgSrc, "_blank", "noopener,noreferrer");
+          showBanner("Đã mở ảnh ở tab mới để lưu về máy.");
+        });
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = imgSrc;
+    a.download = safeName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    showBanner("Đã tải ảnh về máy: " + safeName);
+  };
+
+  window.downloadSeedreamImage = function() {
+    const modelTag = (document.getElementById("cfgSeedreamModel")?.value || "seedream").replace(/[^a-zA-Z0-9_-]+/g, "_");
+    window.downloadImageSource(latestSeedreamImageUrl, modelTag + "_" + Date.now() + ".png");
+  };
+
+  window.attachSeedreamToChatTurn = function() {
+    if (!latestSeedreamImageUrl) {
+      showBanner("Chưa có ảnh Seedream để đưa vào lượt truyện.", "err");
+      return;
+    }
+    const promptVal = (document.getElementById("cfgSeedreamPrompt")?.value || "").trim();
+    pendingImage = { dataUrl: latestSeedreamImageUrl, name: "seedream_" + Date.now() + ".png" };
+    const box = document.getElementById("pendingImageBox");
+    const thumb = document.getElementById("pendingImageThumb");
+    const nameEl = document.getElementById("pendingImageName");
+    const capEl = document.getElementById("imageCaptionInput");
+    if (box && thumb && nameEl) {
+      thumb.src = pendingImage.dataUrl;
+      nameEl.textContent = pendingImage.name;
+      box.style.display = "flex";
+    }
+    if (capEl && promptVal && !capEl.value.trim()) {
+      capEl.value = promptVal.slice(0, 120);
+    }
+    window.goView("chat");
+    showBanner("Đã đính kèm ảnh Seedream vào ô nhập lượt truyện.");
+  };
+
+  function buildSeedreamEndpoints(rawUrl) {
+    const clean = (rawUrl || "").trim().replace(/\/+$/, "");
+    if (!clean) return [];
+    if (/\/images\/generations$/i.test(clean)) return [clean];
+    if (/\/v1$/i.test(clean)) return [clean + "/images/generations"];
+    return [clean + "/v1/images/generations", clean + "/images/generations", clean];
+  }
+
+  function extractImageFromSeedreamResponse(json) {
+    if (!json || typeof json !== "object") return "";
+    const first = Array.isArray(json.data) ? json.data[0] : (Array.isArray(json.images) ? json.images[0] : (Array.isArray(json.output) ? json.output[0] : json));
+    if (typeof first === "string") {
+      if (first.startsWith("data:image/") || /^https?:\/\//i.test(first)) return first;
+      if (first.length > 100) return "data:image/png;base64," + first;
+    }
+    if (first && typeof first === "object") {
+      if (typeof first.url === "string" && first.url) return first.url;
+      if (typeof first.image_url === "string" && first.image_url) return first.image_url;
+      if (typeof first.b64_json === "string" && first.b64_json) {
+        return first.b64_json.startsWith("data:") ? first.b64_json : ("data:image/png;base64," + first.b64_json);
+      }
+      if (typeof first.base64 === "string" && first.base64) {
+        return first.base64.startsWith("data:") ? first.base64 : ("data:image/png;base64," + first.base64);
+      }
+    }
+    return "";
+  }
+
+
+  window.applyDiscoveredSeedreamModel = function(val) {
+    if (!val) return;
+    const inp = document.getElementById("cfgSeedreamModel");
+    if (inp) inp.value = val;
+    state.config.seedreamModel = val;
+    persistState();
+  };
+
+  function buildSeedreamModelEndpoints(rawUrl) {
+    const clean = (rawUrl || "").trim().replace(/\/+$/, "").replace(/\/v1\/images\/generations$/i, "").replace(/\/images\/generations$/i, "").replace(/\/v1$/i, "");
+    if (!clean) return [];
+    return [clean + "/v1/models", clean + "/models"];
+  }
+
+  window.discoverSeedreamModels = async function() {
+    saveConfigFromUI();
+    const endpointRaw = (state.config.seedreamUrl || state.config.proxyUrl || "").trim();
+    const apiKey = (state.config.seedreamApiKey || state.config.proxyKey || "").trim();
+    if (!endpointRaw) {
+      appendSeedreamLog("Lỗi: Chưa nhập Seedream 5 Pro Endpoint (hoặc Proxy URL).");
+      showBanner("Hãy nhập Seedream 5 Pro Endpoint trước khi tải model.", "err");
+      return;
+    }
+    const candidates = buildSeedreamModelEndpoints(endpointRaw);
+    appendSeedreamLog("Đang tải danh sách model ảnh...");
+    for (const url of candidates) {
+      try {
+        const headers = {};
+        if (apiKey) {
+          headers["Authorization"] = "Bearer " + apiKey;
+          headers["x-api-key"] = apiKey;
+        }
+        const res = await fetch(url, { headers });
+        if (!res.ok) {
+          const errTxt = await res.text().catch(() => "");
+          appendSeedreamLog("Lỗi tải model HTTP " + res.status + " tại " + url + (errTxt ? ": " + errTxt.slice(0, 180) : ""));
+          continue;
+        }
+        const json = await res.json();
+        const list = Array.isArray(json.data) ? json.data : (Array.isArray(json.models) ? json.models : []);
+        const names = list.map((x) => (x.id || x.name || "").replace(/^models\//, "")).filter(Boolean);
+        const sel = document.getElementById("cfgSeedreamModelSelect");
+        if (sel) {
+          sel.innerHTML = '<option value="">-- Chọn model ảnh (' + names.length + ') --</option>';
+          for (const n of names) {
+            const opt = document.createElement("option");
+            opt.value = n;
+            opt.textContent = n;
+            sel.appendChild(opt);
+          }
+        }
+        appendSeedreamLog("Tải được " + names.length + " model từ " + url);
+        return;
+      } catch (e) {
+        appendSeedreamLog("Lỗi tải model tại " + url + ": " + (e && e.message ? e.message : String(e)));
+      }
+    }
+    showBanner("Không tải được danh sách model Seedream. Xem chi tiết lỗi tại ô log.", "err");
+  };
+
+  function formatSeedreamFetchError(url, err) {
+    const rawMsg = err && err.message ? err.message : String(err);
+    const isHttpsToHttp = /^https:/i.test(location.protocol) && /^http:/i.test(url);
+    const hints = [];
+    if (isHttpsToHttp) hints.push("Mixed Content (trang HTTPS gọi endpoint HTTP)");
+    hints.push("có thể do chặn CORS từ trình duyệt, sai tên miền/DNS, hoặc server từ chối kết nối");
+    return "Lỗi gọi " + url + ": " + rawMsg + " (" + hints.join("; ") + ").";
+  }
+
+  window.testSeedreamConnection = async function() {
+    saveConfigFromUI();
+    const endpointRaw = (state.config.seedreamUrl || "").trim();
+    const apiKey = (state.config.seedreamApiKey || state.config.proxyKey || "").trim();
+    const model = (state.config.seedreamModel || "seedream-5.0-pro").trim();
+    const size = (state.config.seedreamSize || "1024x1024").trim();
+
+    if (!endpointRaw) {
+      appendSeedreamLog("Lỗi: Chưa nhập Seedream 5 Pro Endpoint để kiểm tra.");
+      showBanner("Hãy nhập Seedream 5 Pro Endpoint trước khi bấm Kiểm tra.", "err");
+      return;
+    }
+
+    const endpoints = buildSeedreamEndpoints(endpointRaw);
+    appendSeedreamLog("Đang kiểm tra kết nối Seedream 5 Pro (" + model + ")...");
+
+    for (const url of endpoints) {
+      try {
+        const headers = { "Content-Type": "application/json" };
+        if (apiKey) {
+          headers["Authorization"] = "Bearer " + apiKey;
+          headers["x-api-key"] = apiKey;
+        }
+        const res = await fetch(url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            model,
+            prompt: "test connection, simple minimal cube on neutral background",
+            size,
+            n: 1
+          })
+        });
+        if (!res.ok) {
+          const errTxt = await res.text().catch(() => "");
+          appendSeedreamLog("Lỗi kiểm tra HTTP " + res.status + " tại " + url + (errTxt ? ": " + errTxt.slice(0, 200) : ""));
+          continue;
+        }
+        appendSeedreamLog("Kiểm tra thành công (HTTP " + res.status + ") tại " + url);
+        showBanner("Kết nối Seedream 5 Pro thành công!");
+        return;
+      } catch (err) {
+        appendSeedreamLog(formatSeedreamFetchError(url, err));
+      }
+    }
+    showBanner("Kiểm tra Seedream thất bại. Xem log lỗi chi tiết bên dưới.", "err");
+  };
+
+  window.generateSeedreamImage = async function() {
+    saveConfigFromUI();
+    const endpointRaw = (state.config.seedreamUrl || "").trim();
+    const apiKey = (state.config.seedreamApiKey || state.config.proxyKey || "").trim();
+    const model = (state.config.seedreamModel || "seedream-5.0-pro").trim();
+    const size = (state.config.seedreamSize || "1024x1024").trim();
+    const prompt = (document.getElementById("cfgSeedreamPrompt")?.value || "").trim() ||
+      ("Cảnh vật và nhân vật trong bối cảnh " + (state.world?.name || "hiện đại") + ", ánh sáng điện ảnh, chi tiết rõ nét.");
+
+    if (!endpointRaw) {
+      appendSeedreamLog("Chưa nhập Seedream 5 Pro Endpoint.");
+      showBanner("Hãy nhập Seedream 5 Pro Endpoint trước khi tạo ảnh.", "err");
+      return;
+    }
+
+    const endpoints = buildSeedreamEndpoints(endpointRaw);
+    appendSeedreamLog("Đang gửi yêu cầu tạo ảnh với model " + model + "...");
+
+    for (const url of endpoints) {
+      try {
+        const headers = { "Content-Type": "application/json" };
+        if (apiKey) {
+          headers["Authorization"] = "Bearer " + apiKey;
+          headers["x-api-key"] = apiKey;
+        }
+        const res = await fetch(url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            model,
+            prompt,
+            size,
+            n: 1,
+            response_format: "url"
+          })
+        });
+        if (!res.ok) {
+          const errTxt = await res.text().catch(() => "");
+          appendSeedreamLog("HTTP " + res.status + " tại " + url + (errTxt ? ": " + errTxt.slice(0, 200) : ""));
+          continue;
+        }
+        const ct = res.headers.get("content-type") || "";
+        if (ct.includes("image/")) {
+          const blob = await res.blob();
+          const reader = new FileReader();
+          reader.onload = () => {
+            const dataUrl = String(reader.result || "");
+            renderSeedreamResult(dataUrl, "Model: " + model + " • Kích thước: " + size);
+            appendSeedreamLog("Đã nhận ảnh nhị phân thành công từ " + url);
+          };
+          reader.readAsDataURL(blob);
+          return;
+        }
+        const json = await res.json();
+        const imgSrc = extractImageFromSeedreamResponse(json);
+        if (!imgSrc) {
+          appendSeedreamLog("Phản hồi không chứa url/base64 ảnh hợp lệ từ " + url);
+          continue;
+        }
+        renderSeedreamResult(imgSrc, "Model: " + model + " • Kích thước: " + size);
+        appendSeedreamLog("Tạo ảnh thành công từ " + url);
+        return;
+      } catch (err) {
+        appendSeedreamLog(formatSeedreamFetchError(url, err));
+      }
+    }
+
+    showBanner("Không thể tạo ảnh từ Seedream 5 Pro. Kiểm tra Endpoint, API Key và log bên dưới.", "err");
+  };
+
   window.testProxyConnection = async function() {
     saveConfigFromUI();
     appendProxyLog("Đang kiểm tra kết nối proxy...");
@@ -1701,10 +2655,31 @@
     }
   };
 
+  function updatePrefillToggleUI() {
+    const enabled = Boolean(state.tawaPreset && state.tawaPreset.prefillEnabled);
+    const btn = document.getElementById("cfgPrefillToggleBtn");
+    if (btn) {
+      btn.textContent = enabled ? "Prefill: Bật" : "Prefill: Tắt";
+      btn.className = "btn btn-sm " + (enabled ? "btn-success" : "");
+    }
+  }
+
+  window.togglePrefillSetting = function() {
+    state.tawaPreset.prefillEnabled = !Boolean(state.tawaPreset.prefillEnabled);
+    const cfgPfInput = document.getElementById("cfgPrefillInput");
+    if (cfgPfInput) state.tawaPreset.prefill = cfgPfInput.value;
+    updatePrefillToggleUI();
+    persistState();
+    showBanner(state.tawaPreset.prefillEnabled ? "Đã BẬT gửi Prefill khi gọi AI." : "Đã TẮT gửi Prefill khi gọi AI.");
+  };
+
   function syncPresetToUI() {
+    updatePrefillToggleUI();
     const list = document.getElementById("presetModuleList");
     const prefill = document.getElementById("presetPrefillInput");
     if (prefill) prefill.value = state.tawaPreset.prefill || "";
+    const cfgPf = document.getElementById("cfgPrefillInput");
+    if (cfgPf) cfgPf.value = state.tawaPreset.prefill || "";
     if (!list) return;
     list.innerHTML = "";
 
@@ -1775,7 +2750,11 @@
       if (state.tawaPreset.modules[i]) state.tawaPreset.modules[i].content = ta.value;
     });
     const pf = document.getElementById("presetPrefillInput");
-    if (pf) state.tawaPreset.prefill = pf.value;
+    if (pf) {
+      state.tawaPreset.prefill = pf.value;
+      const cfgPf = document.getElementById("cfgPrefillInput");
+      if (cfgPf) cfgPf.value = pf.value;
+    }
     persistState();
     showBanner("Đã lưu chuỗi P&P Preset.");
   };
@@ -1974,6 +2953,7 @@
     if (root.tawaPreset && Array.isArray(root.tawaPreset.modules)) {
       state.tawaPreset = {
         modules: root.tawaPreset.modules,
+        prefillEnabled: typeof root.tawaPreset.prefillEnabled === "boolean" ? root.tawaPreset.prefillEnabled : state.tawaPreset.prefillEnabled,
         prefill: root.tawaPreset.prefill || state.tawaPreset.prefill
       };
     }
@@ -2113,6 +3093,31 @@
     showBanner("Đã hoàn tác về checkpoint trước đó.");
   };
 
+  window.resetCleanData = function() {
+    const ok = window.confirm(
+      "Xóa sạch toàn bộ dữ liệu save, slot, checkpoint, truyện đồng nhân và cấu hình lưu trên trình duyệt để đưa về trạng thái trắng mặc định?"
+    );
+    if (!ok) return;
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (_) {}
+    state = createInitialState();
+    state.currentPage = 0;
+    pendingImage = null;
+    isGenerating = false;
+    try {
+      if (typeof syncConfigToUI === "function") syncConfigToUI();
+      if (typeof applyLobbyBg === "function") applyLobbyBg();
+      if (typeof updateLobbyPill === "function") updateLobbyPill();
+      if (typeof applyBottomNavVisibility === "function") applyBottomNavVisibility();
+      if (typeof syncViewportBottomNav === "function") syncViewportBottomNav();
+      if (typeof renderChatPage === "function") renderChatPage();
+      if (typeof renderSlots === "function") renderSlots();
+    } catch (_) {}
+    showBanner("Đã reset sạch toàn bộ dữ liệu về mặc định.");
+    if (typeof window.goView === "function") window.goView("lobby");
+  };
+
   function renderSlots() {
     const box = document.getElementById("slotListContainer");
     if (!box) return;
@@ -2192,12 +3197,1007 @@
     });
   }
 
+  function applyLobbyBg() {
+    const wrap = document.getElementById("lobbyHeroWrap");
+    if (!wrap) return;
+    if (state.lobbyBgDataUrl) {
+      wrap.style.backgroundImage = 'url("' + state.lobbyBgDataUrl.replace(/"/g, '\"') + '")';
+      wrap.classList.add("has-bg");
+    } else {
+      wrap.style.backgroundImage = "";
+      wrap.classList.remove("has-bg");
+    }
+  }
+
+  window.triggerLobbyBgPick = function() {
+    if (state.lobbyBgDataUrl) {
+      // Offer quick toggle: if user clicks again when wallpaper exists, ask to change or clear
+      const clearIt = window.confirm("Bấm OK để chọn ảnh nền mới, hoặc Cancel để xóa ảnh nền hiện tại về mặc định.");
+      if (!clearIt) {
+        state.lobbyBgDataUrl = "";
+        persistState();
+        applyLobbyBg();
+        return;
+      }
+    }
+    const inp = document.getElementById("lobbyBgInput");
+    if (inp) { inp.value = ""; inp.click(); }
+  };
+
+  window.handleLobbyBgSelect = function(ev) {
+    const file = ev.target && ev.target.files && ev.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      state.lobbyBgDataUrl = String(reader.result || "");
+      persistState();
+      applyLobbyBg();
+    };
+    reader.readAsDataURL(file);
+  };
+
+  let activeDnSubTab = "mc";
+
+  function appendDnLog(msg) {
+    const log = document.getElementById("dnStatusLog");
+    if (!log) return;
+    const ts = new Date().toLocaleTimeString("vi-VN", { hour12: false });
+    log.textContent = (log.textContent ? log.textContent + "\n" : "") + "[" + ts + "] " + msg;
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function setDnBadge(text, isOk = false) {
+    const b = document.getElementById("dnResearchBadge");
+    if (!b) return;
+    b.textContent = text;
+    b.className = "pill " + (isOk ? "pill-ok" : "");
+  }
+
+  window.switchDnTab = function(tabName) {
+    activeDnSubTab = tabName || "mc";
+    document.querySelectorAll(".dn-subtab-btn").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.getAttribute("data-dntab") === activeDnSubTab);
+    });
+    document.querySelectorAll(".dn-pane").forEach((pane) => {
+      pane.classList.toggle("is-active", pane.id === "dnPane-" + activeDnSubTab);
+    });
+  };
+
+  function getActiveCompanion() {
+    if (!Array.isArray(state.companions) || !state.companions.length) {
+      state.companions = [{
+        id: "comp_default_1",
+        name: "Đồng nhân mặc định",
+        role: "Đồng nhân / AU",
+        sourceQuery: "",
+        sourceContent: "",
+        mc: { name: "", pronoun: "", gender: "", age: "", personality: "", appearance: "" },
+        worldSetting: "",
+        worldRules: "",
+        npcs: [],
+        note: ""
+      }];
+      state.activeCompanionId = "comp_default_1";
+    }
+    const found = state.companions.find((c) => c.id === state.activeCompanionId) || state.companions[0];
+    if (!found.mc || typeof found.mc !== "object") {
+      found.mc = { name: state.player.name || "", pronoun: state.player.pronoun || "", gender: "", age: "", personality: "", appearance: "" };
+    }
+    if (!Array.isArray(found.npcs)) found.npcs = [];
+    return found;
+  }
+
+  function readCompanionFormInto(cur) {
+    const qEl = document.getElementById("dnSourceQueryInput");
+    const tEl = document.getElementById("dnWorldTitleInput");
+    const sEl = document.getElementById("dnSourceContentInput");
+
+    const mcModeEl = document.getElementById("dnMcSourceMode");
+    const mcNameEl = document.getElementById("dnMcName");
+    const mcProEl = document.getElementById("dnMcPronoun");
+    const mcRoleEl = document.getElementById("dnMcRoleType");
+    const mcCanonEl = document.getElementById("dnCanonMcName");
+    const mcOriginEl = document.getElementById("dnMcOriginRole");
+    const mcRelEl = document.getElementById("dnCanonMcRelation");
+    const mcGenEl = document.getElementById("dnMcGender");
+    const mcAgeEl = document.getElementById("dnMcAge");
+    const mcPerEl = document.getElementById("dnMcPersonality");
+    const mcAppEl = document.getElementById("dnMcAppearance");
+
+    const wSetEl = document.getElementById("dnWorldSetting");
+    const wRuleEl = document.getElementById("dnWorldRules");
+
+    if (qEl) cur.sourceQuery = qEl.value.trim();
+    if (tEl) cur.name = tEl.value.trim() || cur.sourceQuery || "Thế giới đồng nhân";
+    if (sEl) cur.sourceContent = sEl.value;
+
+    cur.mc = cur.mc || {};
+    if (mcModeEl) cur.mc.sourceMode = mcModeEl.value === "canon" ? "canon" : "custom";
+    if (mcNameEl) cur.mc.name = mcNameEl.value.trim();
+    if (mcProEl) cur.mc.pronoun = mcProEl.value.trim();
+    if (mcRoleEl) cur.mc.roleType = mcRoleEl.value;
+    if (mcCanonEl) cur.mc.canonMcName = mcCanonEl.value.trim();
+    if (mcOriginEl) cur.mc.originRole = mcOriginEl.value;
+    if (mcRelEl) cur.mc.canonMcRelation = mcRelEl.value;
+    if (mcGenEl) cur.mc.gender = mcGenEl.value.trim();
+    if (mcAgeEl) cur.mc.age = mcAgeEl.value.trim();
+    if (mcPerEl) cur.mc.personality = mcPerEl.value;
+    if (mcAppEl) cur.mc.appearance = mcAppEl.value;
+
+    if (wSetEl) cur.worldSetting = wSetEl.value;
+    if (wRuleEl) cur.worldRules = wRuleEl.value;
+
+    cur.role = cur.sourceQuery || "Đồng nhân / AU";
+    cur.note = [cur.worldSetting, cur.worldRules].filter(Boolean).join(" | ").slice(0, 240);
+  }
+  window.onMcRoleTypeChange = function(roleType) {
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    cur.mc = cur.mc || {};
+    cur.mc.roleType = roleType || "transmigrator";
+    const originEl = document.getElementById("dnMcOriginRole");
+    const relEl = document.getElementById("dnCanonMcRelation");
+    if (roleType === "transmigrator") {
+      if (originEl && !originEl.value.trim()) {
+        originEl.value = "Người xuyên không vào thế giới nguyên tác, mang theo hiểu biết và con đường phát triển riêng.";
+      }
+      if (relEl && !relEl.value.trim()) {
+        relEl.value = "Nhân vật chính nguyên tác vẫn tồn tại song song trong thế giới; có thể gặp gỡ, đồng hành hoặc tạo biến số.";
+      }
+    } else if (roleType === "powerhouse") {
+      if (originEl && !originEl.value.trim()) {
+        originEl.value = "Đại năng / Cường giả đứng đầu một phương trong thế giới, am hiểu quy tắc và bí mật sâu xa.";
+      }
+      if (relEl && !relEl.value.trim()) {
+        relEl.value = "Nhân vật chính nguyên tác vẫn hiện diện trong thế giới; nhân vật chính tự tạo có thể là tiền bối, đối thủ hoặc biến số lớn.";
+      }
+    }
+    persistState();
+  };
+
+  function syncCompanionToUI() {
+    const cur = getActiveCompanion();
+    const qEl = document.getElementById("dnSourceQueryInput");
+    const tEl = document.getElementById("dnWorldTitleInput");
+    const sEl = document.getElementById("dnSourceContentInput");
+
+    const mcModeEl = document.getElementById("dnMcSourceMode");
+    const mcPickFieldEl = document.getElementById("dnCanonPickField");
+    const mcNameEl = document.getElementById("dnMcName");
+    const mcProEl = document.getElementById("dnMcPronoun");
+    const mcRoleEl = document.getElementById("dnMcRoleType");
+    const mcCanonEl = document.getElementById("dnCanonMcName");
+    const mcOriginEl = document.getElementById("dnMcOriginRole");
+    const mcRelEl = document.getElementById("dnCanonMcRelation");
+    const mcGenEl = document.getElementById("dnMcGender");
+    const mcAgeEl = document.getElementById("dnMcAge");
+    const mcPerEl = document.getElementById("dnMcPersonality");
+    const mcAppEl = document.getElementById("dnMcAppearance");
+
+    const wSetEl = document.getElementById("dnWorldSetting");
+    const wRuleEl = document.getElementById("dnWorldRules");
+
+    if (qEl) qEl.value = cur.sourceQuery || "";
+    if (tEl) tEl.value = cur.name || "";
+    if (sEl) sEl.value = cur.sourceContent || "";
+
+    const mc = cur.mc || {};
+    const activeMode = mc.sourceMode === "canon" ? "canon" : "custom";
+    if (mcModeEl) mcModeEl.value = activeMode;
+    if (mcPickFieldEl) mcPickFieldEl.style.display = activeMode === "canon" ? "" : "none";
+    refreshCanonPickSelect(cur);
+    if (mcNameEl) mcNameEl.value = mc.name || "";
+    if (mcProEl) mcProEl.value = mc.pronoun || "";
+    if (mcRoleEl) mcRoleEl.value = mc.roleType || "transmigrator";
+    if (mcCanonEl) mcCanonEl.value = mc.canonMcName || "";
+    if (mcOriginEl) mcOriginEl.value = mc.originRole || "";
+    if (mcRelEl) mcRelEl.value = mc.canonMcRelation || "";
+    if (mcGenEl) mcGenEl.value = mc.gender || "";
+    if (mcAgeEl) mcAgeEl.value = mc.age || "";
+    if (mcPerEl) mcPerEl.value = mc.personality || "";
+    if (mcAppEl) mcAppEl.value = mc.appearance || "";
+
+    if (wSetEl) wSetEl.value = cur.worldSetting || "";
+    if (wRuleEl) wRuleEl.value = cur.worldRules || "";
+
+    setDnBadge((cur.sourceContent && cur.sourceContent.trim()) ? "Đã có tư liệu" : "Chưa tra cứu", Boolean(cur.sourceContent && cur.sourceContent.trim()));
+    renderFanficNpcList(cur);
+    renderCompanionList();
+  }
+  function renderFanficNpcList(cur) {
+    const box = document.getElementById("dnNpcListContainer");
+    if (!box) return;
+    box.innerHTML = "";
+    const npcs = cur.npcs || [];
+    if (!npcs.length) {
+      box.innerHTML = '<div class="card-sub">Chưa có NPC đồng nhân nào. Bạn có thể bấm "+ Thêm NPC" hoặc dùng AI Phân tích / AI Khởi tạo nhanh.</div>';
+      return;
+    }
+    npcs.forEach((npc, idx) => {
+      const card = document.createElement("div");
+      card.className = "slot-item";
+      const top = document.createElement("div");
+      top.className = "slot-top";
+      top.innerHTML = '<span class="slot-name">' + (npc.name || ("NPC " + (idx + 1))) + '</span>' +
+        '<span class="pill">' + (npc.role || "Đồng nhân") + '</span>';
+      const meta = document.createElement("div");
+      meta.className = "slot-meta";
+      meta.textContent = npc.desc || "";
+      const btns = document.createElement("div");
+      btns.className = "btn-row";
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "btn btn-sm btn-danger";
+      del.textContent = "Xóa NPC";
+      del.onclick = () => {
+        cur.npcs.splice(idx, 1);
+        persistState();
+        renderFanficNpcList(cur);
+      };
+      btns.appendChild(del);
+      card.appendChild(top);
+      card.appendChild(meta);
+      card.appendChild(btns);
+      box.appendChild(card);
+    });
+  }
+
+  window.addFanficNpc = function() {
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    const nameEl = document.getElementById("dnNpcName");
+    const roleEl = document.getElementById("dnNpcRole");
+    const descEl = document.getElementById("dnNpcDesc");
+    const name = (nameEl ? nameEl.value : "").trim();
+    const role = (roleEl ? roleEl.value : "").trim() || "Nhân vật đồng nhân";
+    const desc = (descEl ? descEl.value : "").trim();
+    if (!name && !desc) {
+      showBanner("Hãy nhập tên hoặc mô tả NPC đồng nhân.", "err");
+      return;
+    }
+    cur.npcs.unshift({
+      id: "npc_" + Date.now(),
+      name: name || ("NPC " + (cur.npcs.length + 1)),
+      role,
+      desc
+    });
+    if (nameEl) nameEl.value = "";
+    if (roleEl) roleEl.value = "";
+    if (descEl) descEl.value = "";
+    persistState();
+    renderFanficNpcList(cur);
+    showBanner("Đã thêm NPC đồng nhân: " + (name || "NPC mới"));
+  };
+
+  async function callAiJsonOrText(promptText) {
+    const baseUrl = (state.config.proxyUrl || "").trim();
+    const model = (state.config.model || "").trim() || "gemini-2.5-pro";
+    const apiKey = (state.config.proxyKey || "").trim();
+    if (!baseUrl) return null;
+
+    const proto = state.config.apiProtocol || "openai";
+    const isGemini = proto === "gemini" || (proto === "auto" && (/generativelanguage\.googleapis\.com/i.test(baseUrl) || /:(generateContent|streamGenerateContent)/i.test(baseUrl)));
+    const endpoints = buildEndpointCandidates(baseUrl, model, false, isGemini);
+    const headers = { "Content-Type": "application/json" };
+    if (apiKey) {
+      headers["Authorization"] = "Bearer " + apiKey;
+      headers["x-goog-api-key"] = apiKey;
+    }
+
+    for (const url of endpoints) {
+      try {
+        const body = isGemini
+          ? { contents: [{ role: "user", parts: [{ text: promptText }] }] }
+          : { model, messages: [{ role: "user", content: promptText }], stream: false };
+        const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
+        if (!res.ok) continue;
+        const data = await res.json();
+        const out =
+          data?.choices?.[0]?.message?.content ??
+          data?.candidates?.[0]?.content?.parts?.[0]?.text ??
+          data?.content ??
+          data?.text ??
+          "";
+        if (typeof out === "string" && out.trim()) return out.trim();
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  function normalizeSearchText(str) {
+      return String(str || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function scoreWikiHit(hit, query) {
+      const rawTitle = String(hit?.title || "").toLowerCase().trim();
+      const rawSnippet = String(hit?.snippet || "").replace(/<[^>]+>/g, " ").toLowerCase();
+      const title = normalizeSearchText(rawTitle);
+      const snippet = normalizeSearchText(rawSnippet);
+      const cleanQ = normalizeSearchText(query);
+
+      const qTokens = cleanQ
+        .split(/\s+/)
+        .map((t) => t.trim())
+        .filter((t) => t.length >= 2);
+
+      if (!cleanQ || !title || !qTokens.length) return -200;
+
+      const genericTokens = new Set([
+        "tien", "tu", "truyen", "tieu", "thuyet", "novel", "web", "book", "phim",
+        "dong", "nhan", "the", "gioi", "dai", "chi", "ky", "luc", "truyen", "thuyet"
+      ]);
+
+      const queryWantsPerson = /\b(dien vien|ca si|nhac si|rapper|hoa hau|nguoi mau|nhan vat lich su|nha van|tac gia|actor|singer|model|author)\b/i.test(cleanQ);
+      const queryWantsWork = /\b(tieu thuyet|truyen|tien hiep|huyen huyen|kiem hiep|anime|manga|manhua|phim|game|tro choi|novel|xianxia|wuxia)\b/i.test(cleanQ);
+
+      const nonGenericTokens = qTokens.filter((t) => !genericTokens.has(t));
+      const keyTokens = nonGenericTokens.length ? nonGenericTokens : qTokens;
+
+      let matchedKeyCount = 0;
+      let matchedAnyCount = 0;
+      let score = 0;
+
+      if (title === cleanQ) {
+        score += 80;
+      } else if (title.includes(cleanQ) && cleanQ.length >= 4) {
+        score += 45;
+      }
+
+      for (const tok of qTokens) {
+        if (title.includes(tok)) {
+          score += genericTokens.has(tok) ? 4 : 18;
+          matchedAnyCount += 1;
+        } else if (snippet.includes(tok)) {
+          score += genericTokens.has(tok) ? 1 : 4;
+        }
+      }
+
+      for (const kTok of keyTokens) {
+        if (title.includes(kTok) || snippet.includes(kTok)) {
+          matchedKeyCount += 1;
+        }
+      }
+
+      // Bắt buộc phải khớp đa số từ khóa đặc trưng của truy vấn, không ăn may 1 chữ trùng âm
+      const requiredKeyMatches = keyTokens.length >= 2 ? Math.ceil(keyTokens.length * 0.6) : 1;
+      if (matchedKeyCount < requiredKeyMatches) {
+        return -150;
+      }
+
+      const titleHasKey = keyTokens.some((kTok) => title.includes(kTok));
+      if (!titleHasKey && keyTokens.length >= 2) {
+        score -= 50;
+      }
+
+      // Chặn mạnh bài tiểu sử / người nổi tiếng / chính trị / địa danh khi người dùng tra tác phẩm hoặc không hỏi về người
+      const personOrOffTopicRegex =
+        /\b(ca si|nhac si|rapper|dien vien|hoa hau|nguoi mau|beauty queen|singer|actor|actress|model|album|bai hat|single|rap|kpop|vpop|bong da|cau thu|chinh tri|hoang de|nha su|thien su|phat hoang|tinh|huyen|xa|quoc gia|dan toc)\b/i;
+
+      if (!queryWantsPerson && personOrOffTopicRegex.test(title + " " + snippet)) {
+        const hasExplicitWorkWordInTitle = /\b(tieu thuyet|truyen|tien hiep|huyen huyen|kiem hiep|phim|game|tro choi|novel|series|film)\b/i.test(title);
+        if (!hasExplicitWorkWordInTitle) {
+          score -= 90;
+        }
+      }
+
+      if (/\b(tieu thuyet|truyen|tien hiep|huyen huyen|kiem hiep|novel|web novel|xianxia|wuxia|anime|manga|manhua)\b/i.test(title + " " + snippet)) {
+        score += queryWantsWork ? 25 : 15;
+      }
+
+      return score;
+    }
+
+    async function fetchWebSourcesForWork(query) {
+      const cleanQuery = String(query || "").trim();
+      const collected = [];
+      const searchVariants = [cleanQuery];
+      if (!/tiểu thuyết|truyện|tiên hiệp|huyền huyễn|kiếm hiệp/i.test(cleanQuery)) {
+        searchVariants.push(cleanQuery + " tiểu thuyết");
+      }
+
+      const wikiDomains = ["vi.wikipedia.org", "en.wikipedia.org"];
+      for (const host of wikiDomains) {
+        for (const qStr of searchVariants) {
+          try {
+            const sUrl = "https://" + host + "/w/api.php?action=query&list=search&srsearch=" + encodeURIComponent(qStr) + "&utf8=1&format=json&origin=*";
+            const sRes = await fetch(sUrl);
+            if (!sRes.ok) continue;
+            const sJson = await sRes.json();
+            const rawHits = Array.isArray(sJson?.query?.search) ? sJson.query.search : [];
+            const ranked = rawHits
+              .map((h) => ({ h, score: scoreWikiHit(h, cleanQuery) }))
+              .filter((item) => item.score >= 22)
+              .sort((a, b) => b.score - a.score)
+              .slice(0, 2);
+
+            for (const item of ranked) {
+              const h = item.h;
+              if (!h?.title) continue;
+              const marker = "[Nguồn Wikipedia (" + host + ") - " + h.title + "]";
+              if (collected.some((c) => c.startsWith(marker))) continue;
+              const sumUrl = "https://" + host + "/api/rest_v1/page/summary/" + encodeURIComponent(h.title);
+              const pRes = await fetch(sumUrl);
+              if (pRes.ok) {
+                const pJson = await pRes.json();
+                if (pJson?.extract) {
+                  collected.push(marker + "\n" + pJson.extract);
+                }
+              }
+            }
+            if (collected.length >= 2) break;
+          } catch (_) {}
+        }
+      }
+
+      return collected.join("\n\n").trim();
+    }
+
+    async function runTimedLookupWithProgress(query, onProgress) {
+      const deadlineMs = 240000; // Cửa sổ tra cứu chuyên sâu tối đa 4 phút (AI 4h/3.8 style) nếu proxy/nguồn phản hồi chậm
+      const startTs = Date.now();
+      let tick = 0;
+
+      const progressTimer = setInterval(() => {
+        tick += 1;
+        const elapsedSec = Math.round((Date.now() - startTs) / 1000);
+        if (typeof onProgress === "function") {
+          onProgress(elapsedSec, tick);
+        }
+      }, 2500);
+
+      try {
+        // Bước 1: Thử tra cứu nguồn Wikipedia đã lọc chặt trước
+        const wikiPromise = fetchWebSourcesForWork(query);
+
+        // Bước 2: Nếu có cấu hình AI/Proxy, gọi AI đối chiếu & tóm tắt sâu tác phẩm gốc (có chờ đủ thời gian thay vì bỏ cuộc sớm)
+        const aiPromise = (state.config?.proxyUrl || "").trim()
+          ? callAiJsonOrText(
+              "Bạn là chuyên gia tra cứu & phân tích tác phẩm gốc cho tiểu thuyết đồng nhân. Hãy tra cứu kỹ và trình bày chi tiết bằng tiếng Việt về tác phẩm / chủ đề: \"" + query + "\".\n" +
+              "Chỉ tập trung đúng vào tác phẩm/chủ đề được hỏi (tuyệt đối không lôi người nổi tiếng, ca sĩ, diễn viên hay nhân vật lịch sử không liên quan).\n" +
+              "Hãy nêu rõ:\n1. Tổng quan tác phẩm gốc & tác giả/bối cảnh\n2. Hệ thống thiết lập, quy tắc & sức mạnh/luật lệ\n3. Các nhân vật chủ chốt & mối quan hệ\n4. Ý tưởng/hướng khai thác đồng nhân bám sát nguyên tác."
+            )
+          : Promise.resolve(null);
+
+        const raceWithTimeout = (promise, ms) => Promise.race([
+          promise,
+          new Promise((resolve) => setTimeout(() => resolve(null), ms))
+        ]);
+
+        const [wikiText, aiText] = await Promise.all([
+          raceWithTimeout(wikiPromise, Math.min(20000, deadlineMs)),
+          raceWithTimeout(aiPromise, deadlineMs)
+        ]);
+
+        const parts = [];
+        if (wikiText) parts.push(wikiText);
+        if (aiText) parts.push("[Nguồn phân tích AI chuyên sâu]\n" + aiText);
+        return parts.join("\n\n").trim();
+      } finally {
+        clearInterval(progressTimer);
+      }
+    }
+
+    window.aiLookupOriginalWork = async function() {
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    const query = (cur.sourceQuery || cur.name || "").trim();
+    if (!query) {
+      showBanner("Hãy nhập Tên tác phẩm gốc / Từ khóa để AI lấy nguồn trên mạng.", "err");
+      return;
+    }
+
+    const btn = document.getElementById("dnAiLookupBtn");
+    if (btn) btn.disabled = true;
+    setDnBadge("Đang tra chuyên sâu...");
+    appendDnLog("Bắt đầu tra cứu chuyên sâu (chế độ đối chiếu & lọc nhiễu chặt) cho: \"" + query + "\"... ");
+
+    try {
+      let webText = await runTimedLookupWithProgress(query, (elapsedSec, tick) => {
+        if (tick % 2 === 0) {
+          appendDnLog("Đang đối chiếu & kiểm tra nguồn cho \"" + query + "\" (" + elapsedSec + "s)...");
+        }
+      });
+
+      if (!webText) {
+        webText =
+          "Tác phẩm / Chủ đề: " + query + "\n" +
+          "- Bối cảnh: Thế giới mở rộng dựa trên nguyên tác \"" + query + "\", bám sát thiết lập gốc và lọc bỏ các kết quả lệch chủ đề.\n" +
+          "- Quy tắc: Các nhân vật giữ bản sắc cốt lõi của nguyên tác, mọi thay đổi lớn đều tạo phản ứng dây chuyền lên bối cảnh và các phe phái liên quan.\n" +
+          "- Nhân vật tiêu biểu: Có thể bổ sung các nhân vật cốt lõi của nguyên tác vào danh sách NPC đồng nhân để tương tác trực tiếp.";
+        appendDnLog("Chưa tìm thấy bài khớp chuẩn cao từ nguồn mở hoặc chưa cấu hình Proxy AI; đã tạo khung tư liệu sạch cho \"" + query + "\" (không chèn kết quả lạc đề) — bạn có thể dán thêm nội dung truyện gốc vào ô phía trên rồi bấm PHÂN TÍCH TÁC PHẨM.");
+      } else {
+        appendDnLog("Đã hoàn tất tra cứu & lọc nguồn cho \"" + query + "\".");
+      }
+
+      const srcEl = document.getElementById("dnSourceContentInput");
+      if (srcEl) {
+        srcEl.value = srcEl.value.trim() ? (srcEl.value.trim() + "\n\n" + webText) : webText;
+      }
+      cur.sourceContent = srcEl ? srcEl.value : webText;
+      persistState();
+      setDnBadge("Đã có tư liệu", true);
+      showBanner("Đã lấy nguồn tác phẩm gốc (đã lọc nhiễu) cho: " + query);
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  };
+
+  function upsertCanonNpcAndCandidate(cur, canonObj) {
+    if (!canonObj || typeof canonObj !== "object") return;
+    const canonName = String(canonObj.name || "").trim();
+    if (!canonName) return;
+
+    const descParts = [
+      canonObj.personality ? ("Tính cách: " + String(canonObj.personality).trim()) : "",
+      canonObj.appearance ? ("Ngoại hình: " + String(canonObj.appearance).trim()) : "",
+      canonObj.gender ? ("Giới tính: " + String(canonObj.gender).trim()) : "",
+      canonObj.age ? ("Tuổi: " + String(canonObj.age).trim()) : ""
+    ].filter(Boolean);
+
+    cur.npcs = Array.isArray(cur.npcs) ? cur.npcs : [];
+    const existingIdx = cur.npcs.findIndex(
+      (n) => (n.name || "").trim().toLowerCase() === canonName.toLowerCase()
+    );
+    const npcEntry = {
+      id: existingIdx >= 0 ? cur.npcs[existingIdx].id : ("npc_canon_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6)),
+      name: canonName,
+      role: existingIdx >= 0 && cur.npcs[existingIdx].role ? cur.npcs[existingIdx].role : "Nhân vật chính nguyên tác",
+      desc: descParts.join(" | ") || (existingIdx >= 0 ? cur.npcs[existingIdx].desc : "Nhân vật từ tác phẩm nguyên tác.")
+    };
+
+    if (existingIdx >= 0) {
+      cur.npcs[existingIdx] = { ...cur.npcs[existingIdx], ...npcEntry };
+    } else {
+      cur.npcs.unshift(npcEntry);
+    }
+
+    cur.canonCandidates = Array.isArray(cur.canonCandidates) ? cur.canonCandidates : [];
+    const candItem = {
+      name: canonName,
+      pronoun: String(canonObj.pronoun || "").trim(),
+      gender: String(canonObj.gender || "Nam").trim(),
+      age: String(canonObj.age || "").trim(),
+      personality: String(canonObj.personality || "").trim(),
+      appearance: String(canonObj.appearance || "").trim(),
+      role: "Nhân vật nguyên tác"
+    };
+    const candIdx = cur.canonCandidates.findIndex(
+      (c) => (c.name || "").trim().toLowerCase() === canonName.toLowerCase()
+    );
+    if (candIdx >= 0) cur.canonCandidates[candIdx] = candItem;
+    else cur.canonCandidates.unshift(candItem);
+
+    cur.mc = cur.mc || {};
+    if (!cur.mc.canonMcName) {
+      cur.mc.canonMcName = canonName;
+    }
+  }
+
+  function refreshCanonPickSelect(cur) {
+    const sel = document.getElementById("dnCanonPickSelect");
+    if (!sel) return;
+    const prevVal = sel.value;
+    const pool = [];
+    const seen = new Set();
+
+    (cur.canonCandidates || []).forEach((c) => {
+      const key = (c.name || "").trim().toLowerCase();
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        pool.push({
+          name: c.name,
+          label: c.name + " (Nguyên tác)"
+        });
+      }
+    });
+
+    (cur.npcs || []).forEach((n) => {
+      const key = (n.name || "").trim().toLowerCase();
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        pool.push({
+          name: n.name,
+          label: n.name + (n.role ? " — " + n.role : "")
+        });
+      }
+    });
+
+    sel.innerHTML = '<option value="">-- Chọn nhân vật nguyên tác / NPC --</option>';
+    pool.forEach((item) => {
+      const opt = document.createElement("option");
+      opt.value = item.name;
+      opt.textContent = item.label;
+      sel.appendChild(opt);
+    });
+    if (prevVal && pool.some((p) => p.name === prevVal)) {
+      sel.value = prevVal;
+    }
+  }
+
+  window.onMcSourceModeChange = function(mode) {
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    cur.mc = cur.mc || {};
+    cur.mc.sourceMode = mode === "canon" ? "canon" : "custom";
+    const pickField = document.getElementById("dnCanonPickField");
+    if (pickField) {
+      pickField.style.display = cur.mc.sourceMode === "canon" ? "" : "none";
+    }
+    refreshCanonPickSelect(cur);
+    persistState();
+  };
+
+  window.onPickCanonAsMc = function(selectedName) {
+    if (!selectedName) return;
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    const fromCand = (cur.canonCandidates || []).find((c) => c.name === selectedName);
+    const fromNpc = (cur.npcs || []).find((n) => n.name === selectedName);
+    const src = fromCand || (fromNpc ? {
+      name: fromNpc.name,
+      pronoun: cur.mc?.pronoun || "ta",
+      gender: cur.mc?.gender || "Nam",
+      age: cur.mc?.age || "",
+      personality: fromNpc.desc || "",
+      appearance: cur.mc?.appearance || "",
+      role: fromNpc.role || "Nhân vật nguyên tác"
+    } : null);
+    if (!src) return;
+
+    cur.mc = {
+      ...(cur.mc || {}),
+      sourceMode: "canon",
+      roleType: "custom",
+      name: src.name,
+      pronoun: src.pronoun || cur.mc?.pronoun || "ta",
+      gender: src.gender || cur.mc?.gender || "Nam",
+      age: src.age || cur.mc?.age || "",
+      personality: src.personality || cur.mc?.personality || "",
+      appearance: src.appearance || cur.mc?.appearance || "",
+      originRole: cur.mc?.originRole || ("Chọn trực tiếp từ nguyên tác: " + src.name + (src.role ? " (" + src.role + ")" : ""))
+    };
+    persistState();
+    syncCompanionToUI();
+    showBanner("Đã chọn nhân vật nguyên tác làm nhân vật chính: " + src.name);
+  };
+
+  function parseStructuredFanficFromText(rawText, cur) {
+    const cleanJsonStr = rawText.replace(/^```(?:json)?\s*/i, "").replace(/```$/i, "").trim();
+    const jsonMatch = cleanJsonStr.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        const obj = JSON.parse(jsonMatch[0]);
+        if (obj.worldTitle && !cur.name) cur.name = String(obj.worldTitle);
+
+        if (obj.mc && typeof obj.mc === "object") {
+          upsertCanonNpcAndCandidate(cur, obj.mc);
+        }
+
+        if (obj.worldSetting) cur.worldSetting = String(obj.worldSetting);
+        if (obj.worldRules) cur.worldRules = String(obj.worldRules);
+        if (Array.isArray(obj.npcs) && obj.npcs.length) {
+          const canonSet = new Set((cur.canonCandidates || []).map((c) => (c.name || "").trim().toLowerCase()));
+          const parsedNpcs = obj.npcs.map((n, i) => ({
+            id: "npc_" + Date.now() + "_" + i,
+            name: String(n.name || ("NPC " + (i + 1))),
+            role: String(n.role || "Đồng nhân"),
+            desc: String(n.desc || "")
+          }));
+          const existingCanon = (cur.npcs || []).filter((n) => canonSet.has((n.name || "").trim().toLowerCase()));
+          const merged = [...existingCanon];
+          parsedNpcs.forEach((pn) => {
+            if (!merged.some((m) => (m.name || "").trim().toLowerCase() === (pn.name || "").trim().toLowerCase())) {
+              merged.push(pn);
+            }
+          });
+          cur.npcs = merged;
+        }
+        return true;
+      } catch (_) {}
+    }
+    return false;
+  }
+
+  window.aiAnalyzeSourceWork = async function() {
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    const sourceText = (cur.sourceContent || "").trim();
+    const query = (cur.sourceQuery || cur.name || "Thế giới đồng nhân").trim();
+    if (!sourceText && !query) {
+      showBanner("Hãy nhập tên tác phẩm hoặc dán nội dung tác phẩm gốc trước khi phân tích.", "err");
+      return;
+    }
+
+    const btn = document.getElementById("dnAnalyzeBtn");
+    if (btn) btn.disabled = true;
+    appendDnLog("Đang phân tích tác phẩm để tách Thế giới, Quy tắc, Nhân vật nguyên tác -> NPC...");
+
+    try {
+      const aiPrompt =
+        "Hãy phân tích tác phẩm đồng nhân sau và trả về CHỈ MỘT JSON hợp lệ (không giải thích ngoài JSON) theo cấu trúc:\n" +
+        '{"worldTitle":"...","mc":{"name":"...","pronoun":"...","gender":"...","age":"...","personality":"...","appearance":"..."},"worldSetting":"...","worldRules":"...","npcs":[{"name":"...","role":"...","desc":"..."}]}\n\n' +
+        "Tên/Từ khóa: " + query + "\nNội dung tác phẩm gốc:\n" + (sourceText || query).slice(0, 3500);
+
+      const aiOut = await callAiJsonOrText(aiPrompt);
+      const parsedOk = aiOut ? parseStructuredFanficFromText(aiOut, cur) : false;
+
+      if (!parsedOk) {
+        const titleBase = cur.sourceQuery || cur.name || "Đồng Nhân";
+        upsertCanonNpcAndCandidate(cur, {
+          name: "Nhân vật chính nguyên tác (" + titleBase + ")",
+          pronoun: "",
+          gender: "Nam",
+          age: "",
+          personality: "Nhân vật trung tâm của mạch truyện nguyên tác.",
+          appearance: ""
+        });
+        cur.worldSetting = cur.worldSetting || (
+          "Thế giới đồng nhân xây dựng từ \"" + titleBase + "\".\n" +
+          (sourceText ? sourceText.slice(0, 600) : "Bối cảnh mở đầu với nhiều mạch truyện và phe phái tương tác.")
+        );
+        cur.worldRules = cur.worldRules || (
+          "1. Bám sát logic & bối cảnh của \"" + titleBase + "\".\n" +
+          "2. Mỗi hành động, năng lực hoặc lựa chọn đều tạo hệ quả rõ ràng trong thế giới.\n" +
+          "3. Giữ nhất quán tính cách và xưng hô của nhân vật chính và NPC."
+        );
+        if (!cur.npcs.length) {
+          cur.npcs = [
+            {
+              id: "npc_" + Date.now() + "_1",
+              name: "Nhân vật đồng hành chủ chốt",
+              role: "Đồng minh / Dẫn dắt",
+              desc: "Am hiểu bối cảnh \"" + titleBase + "\", phản hồi trực tiếp theo hành động và quyết định của nhân vật chính."
+            },
+            {
+              id: "npc_" + Date.now() + "_2",
+              name: "Đối thủ / Biến số phe phái",
+              role: "Thử thách / Xung đột",
+              desc: "Đại diện cho các quy tắc, mâu thuẫn hoặc thế lực đối lập trong thế giới đồng nhân."
+            }
+          ];
+        }
+        appendDnLog("Đã phân tích tư liệu và chuyển nhân vật chính nguyên tác sang NPC, giữ nguyên NVC tự tạo.");
+      } else {
+        appendDnLog("AI đã phân tích xong cấu trúc Đồng nhân (nhân vật chính gốc đã đưa sang NPC).");
+      }
+
+      if (cur.mc?.name) state.player.name = cur.mc.name;
+      if (cur.mc?.pronoun) state.player.pronoun = cur.mc.pronoun;
+      if (cur.name) state.world.name = cur.name;
+
+      persistState();
+      syncCompanionToUI();
+      showBanner("Đã phân tích xong: NVC tự tạo được giữ nguyên, nhân vật gốc đã chuyển sang NPC.");
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  };
+  window.aiQuickGenerateFanfic = async function() {
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    if (!cur.sourceQuery && !cur.name) {
+      cur.sourceQuery = "Thế giới Đồng Nhân Giả Tưởng";
+      cur.name = "Đồng Nhân — Khởi Tạo Nhanh";
+    }
+    if (!cur.sourceContent || !cur.sourceContent.trim()) {
+      await window.aiLookupOriginalWork();
+    }
+    await window.aiAnalyzeSourceWork();
+    showBanner("AI Khởi tạo nhanh đã hoàn tất đầy đủ hồ sơ Đồng nhân.");
+  };
+
+  window.exportFanficPackage = function() {
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    persistState();
+    const safeName = (cur.name || "Dong_Nhan").replace(/[^a-zA-Z0-9_\-À-ɏḀ-ỿ]+/g, "_");
+    triggerDownloadJson("ARK_DongNhan_" + safeName + ".json", cur);
+    showBanner("Đã xuất file Đồng nhân (.json): " + (cur.name || "Đồng nhân"));
+  };
+
+  window.createNewFanficProfile = function() {
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    const idx = (state.companions?.length || 0) + 1;
+    const next = {
+      id: "comp_" + Date.now(),
+      name: "Thế giới đồng nhân " + idx,
+      role: "Đồng nhân / AU",
+      sourceQuery: "",
+      sourceContent: "",
+      mc: {
+        name: state.player.name || "",
+        pronoun: state.player.pronoun || "",
+        gender: "Nam",
+        age: "20",
+        personality: "",
+        appearance: ""
+      },
+      worldSetting: "",
+      worldRules: "",
+      npcs: [],
+      note: ""
+    };
+    state.companions.unshift(next);
+    state.activeCompanionId = next.id;
+    persistState();
+    syncCompanionToUI();
+    showBanner("Đã tạo hồ sơ Đồng nhân mới #" + idx);
+  };
+
+  function renderCompanionList() {
+    const box = document.getElementById("companionListContainer");
+    if (!box) return;
+    box.innerHTML = "";
+    const list = state.companions || [];
+    if (!list.length) {
+      box.innerHTML = '<div class="card-sub">Chưa có hồ sơ đồng nhân nào.</div>';
+      return;
+    }
+    list.forEach((c, idx) => {
+      const isAct = c.id === state.activeCompanionId;
+      const item = document.createElement("div");
+      item.className = "slot-item";
+
+      const top = document.createElement("div");
+      top.className = "slot-top";
+      top.innerHTML = '<span class="slot-name">' + (c.name || ("Đồng nhân " + (idx + 1))) + '</span>' +
+        '<span class="pill ' + (isAct ? "pill-ok" : "") + '">' + (isAct ? "Đang chọn" : (c.sourceQuery || c.role || "Đồng nhân")) + '</span>';
+
+      const npcCount = Array.isArray(c.npcs) ? c.npcs.length : 0;
+      const mcLabel = c.mc?.name ? ("NV chính: " + c.mc.name) : "";
+      const meta = document.createElement("div");
+      meta.className = "slot-meta";
+      meta.textContent = [mcLabel, npcCount ? (npcCount + " NPC") : "", c.worldSetting || c.note || ""].filter(Boolean).join(" • ");
+
+      const btns = document.createElement("div");
+      btns.className = "btn-row";
+
+      const pickBtn = document.createElement("button");
+      pickBtn.type = "button";
+      pickBtn.className = "btn btn-sm " + (isAct ? "btn-success" : "btn-primary");
+      pickBtn.textContent = isAct ? "Đang dùng" : "Chọn dùng";
+      pickBtn.onclick = () => {
+        state.activeCompanionId = c.id;
+        persistState();
+        syncCompanionToUI();
+      };
+
+      const delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "btn btn-sm btn-danger";
+      delBtn.textContent = "Xóa";
+      delBtn.onclick = () => {
+        if (state.companions.length <= 1) {
+          showBanner("Cần giữ ít nhất 1 hồ sơ đồng nhân.", "err");
+          return;
+        }
+        state.companions.splice(idx, 1);
+        if (state.activeCompanionId === c.id) {
+          state.activeCompanionId = state.companions[0].id;
+        }
+        persistState();
+        syncCompanionToUI();
+      };
+
+      btns.appendChild(pickBtn);
+      btns.appendChild(delBtn);
+      item.appendChild(top);
+      item.appendChild(meta);
+      item.appendChild(btns);
+      box.appendChild(item);
+    });
+  }
+
+  window.saveCompanionFromUI = function() {
+    const cur = getActiveCompanion();
+    readCompanionFormInto(cur);
+    if (cur.mc?.name) state.player.name = cur.mc.name;
+    if (cur.mc?.pronoun) state.player.pronoun = cur.mc.pronoun;
+    if (cur.name) state.world.name = cur.name;
+    state.activeCompanionId = cur.id;
+    persistState();
+    renderCompanionList();
+    renderFanficNpcList(cur);
+    showBanner("Đã lưu hồ sơ Đồng nhân: " + cur.name);
+  };
+
+  window.addCompanionEntry = function() {
+    window.createNewFanficProfile();
+  };
+
+  window.enterCompanionWorld = function() {
+    window.saveCompanionFromUI();
+    const cur = getActiveCompanion();
+
+    // Lưu checkpoint để có thể Hoàn tác save cũ bất cứ lúc nào nếu cần
+    if (Array.isArray(state.turns) && state.turns.length) {
+      state.checkpoint = {
+        savedAt: new Date().toISOString(),
+        turns: JSON.parse(JSON.stringify(state.turns)),
+        player: { ...state.player },
+        world: { ...state.world }
+      };
+    }
+
+    // Tạo trang truyện riêng cho hồ sơ Đồng nhân hiện tại (không dính save cũ)
+    const compKey = cur && cur.id ? String(cur.id) : "default";
+    state.companionStories = state.companionStories && typeof state.companionStories === "object"
+      ? state.companionStories
+      : {};
+
+    if (!Array.isArray(state.companionStories[compKey])) {
+      const mcName = (cur && cur.mc && cur.mc.name) ? cur.mc.name : (state.player.name || "Nhân vật chính");
+      const mcPronoun = (cur && cur.mc && cur.mc.pronoun) ? cur.mc.pronoun : (state.player.pronoun || "ta");
+      const worldLabel = (cur && cur.name) ? cur.name : "Thế giới đồng nhân";
+      const settingSummary = (cur && cur.worldSetting)
+        ? cur.worldSetting.trim().slice(0, 220)
+        : "Khung cảnh mở đầu của bản đồng nhân đang bắt đầu.";
+
+      state.companionStories[compKey] = [
+        {
+          id: "dn_page_" + compKey + "_" + Date.now(),
+          user: "Bắt đầu hành trình tại " + worldLabel + " với nhân vật chính " + mcName + " (xưng hô: " + mcPronoun + ").",
+          assistant: "Trang truyện riêng cho \"" + worldLabel + "\" đã được khởi tạo.\n\n" +
+            "Nhân vật chính: " + mcName + " (" + mcPronoun + ").\n" +
+            "Bối cảnh: " + settingSummary + "\n\n" +
+            "Bạn có thể nhập lượt gọi đầu tiên ở ô bên dưới để bắt đầu diễn biến mới."
+        }
+      ];
+    }
+
+    state.turns = JSON.parse(JSON.stringify(state.companionStories[compKey]));
+    state.currentPage = state.turns.length - 1;
+    if (state.currentPage < 0) state.currentPage = 0;
+
+    persistState();
+    updateLobbyPill();
+    window.goView("chat");
+    showBanner("Đã mở trang truyện riêng cho Đồng nhân: " + (cur.name || "Đồng nhân") + " (save cũ đã được tách riêng & lưu checkpoint).");
+  };
+
+  window.startNewStoryFromLobby = function() {
+    state.checkpoint = {
+      savedAt: new Date().toISOString(),
+      turns: JSON.parse(JSON.stringify(state.turns)),
+      player: { ...state.player },
+      world: { ...state.world }
+    };
+    state.turns = [];
+    state.currentPage = 0;
+    persistState();
+    updateLobbyPill();
+    window.goView("chat");
+    showBanner("Đã khởi tạo phiên mới (có thể Hoàn tác trong mục Dữ liệu nếu cần).");
+  };
+
   loadPersistedState();
+  applyLobbyBg();
   updateLobbyPill();
   applyBottomNavVisibility();
   syncViewportBottomNav();
+
+  try {
+    document.addEventListener("click", function(e) {
+      const btn = e.target && e.target.closest ? e.target.closest("[data-nav]") : null;
+      if (btn) {
+        const navTarget = btn.getAttribute("data-nav");
+        if (navTarget && typeof window.goView === "function") {
+          window.goView(navTarget);
+        }
+      }
+    }, false);
+  } catch (_) {}
+
   window.goView("lobby");
-})();
-</script>
+})();</script>
 </body>
 </html>
